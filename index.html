@@ -117,50 +117,10 @@
       <div id="codeBadge" class="badge" style="display:none;"></div>
     </div>
 
-    <!-- КНОПКА "ДОДАТИ ПРОДУКТ" -->
-    <button class="btn-orange" onclick="toggleAddForm()" id="toggleAddBtn">
+    <!-- КНОПКА "ДОДАТИ ПРОДУКТ" — відкриває Web App в новій вкладці -->
+    <button class="btn-orange" onclick="window.open(WEB_APP_URL, '_blank')">
       ➕ Додати продукт у базу
     </button>
-
-    <!-- ФОРМА ДОДАВАННЯ (відкривається в новій вкладці) -->
-    <div class="card" id="addFormCard" style="display:none;">
-      <h2 style="font-size:16px;margin-bottom:12px;">➕ Новий продукт</h2>
-      <p style="font-size:13px;color:#666;margin-bottom:12px;">Форма відкриється в новій вкладці. Після додавання закрий її та онови цю сторінку.</p>
-
-      <form method="POST" target="_blank" id="addForm">
-        <label for="newName">Назва *</label>
-        <input type="text" name="name" id="newName" placeholder="Наприклад: Огірок" required>
-
-        <div class="form-grid">
-          <div>
-            <label for="newKkal">Ккал</label>
-            <input type="number" name="kkal" id="newKkal" step="0.1" value="0">
-          </div>
-          <div>
-            <label for="newProt">Білки</label>
-            <input type="number" name="prot" id="newProt" step="0.1" value="0">
-          </div>
-          <div>
-            <label for="newFat">Жири</label>
-            <input type="number" name="fat" id="newFat" step="0.1" value="0">
-          </div>
-          <div>
-            <label for="newCarbs">Вуглеводи</label>
-            <input type="number" name="carbs" id="newCarbs" step="0.1" value="0">
-          </div>
-        </div>
-
-        <label for="newCode">Штрихкод (якщо є)</label>
-        <input type="text" name="code" id="newCode" placeholder="4850001001010">
-
-        <div class="flex-row" style="gap:8px;">
-          <button type="submit" class="btn-green" style="margin-bottom:0;">💾 Додати</button>
-          <button type="button" class="btn-outline" onclick="toggleAddForm()" style="margin-bottom:0;">✖ Скасувати</button>
-        </div>
-      </form>
-    </div>
-
-    <div id="successBanner" class="success-banner">✅ Продукт додано! Онови сторінку, щоб побачити.</div>
 
     <p style="text-align:center;font-size:12px;color:#999;margin-top:12px;">
       Дані з Google Таблиці
@@ -231,7 +191,7 @@
       );
       if (filtered.length === 0) {
         productList.style.display = 'none';
-        notFoundMsg.innerHTML = '❌ Немає в базі. <a href="#" onclick="toggleAddForm();return false;" style="color:#2196F3;">➕ Додати</a>';
+        notFoundMsg.innerHTML = '❌ Немає в базі. <a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
         notFoundMsg.style.display = 'block';
         currentProduct = null;
         document.getElementById('resultCard').style.display = 'none';
@@ -310,7 +270,7 @@
         searchInput.value = '';
         currentProduct = null;
         document.getElementById('resultCard').style.display = 'none';
-        notFoundMsg.innerHTML = '📷 Код: ' + decodedText + '<br><a href="#" onclick="toggleAddForm();return false;" style="color:#2196F3;">➕ Додати продукт</a>';
+        notFoundMsg.innerHTML = '📷 Код: ' + decodedText + '<br><a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
         notFoundMsg.style.display = 'block';
         showToast('📷 Код не знайдено', 3000);
       }
@@ -341,24 +301,6 @@
       }
       document.getElementById('resultCard').style.display = 'block';
     }
-
-    // ФОРМА ДОДАВАННЯ
-    function toggleAddForm() {
-      const card = document.getElementById('addFormCard');
-      const btn = document.getElementById('toggleAddBtn');
-      const banner = document.getElementById('successBanner');
-      if (card.style.display !== 'block') {
-        card.style.display = 'block';
-        btn.textContent = '✖ Сховати форму';
-        banner.style.display = 'none';
-      } else {
-        card.style.display = 'none';
-        btn.textContent = '➕ Додати продукт у базу';
-      }
-    }
-
-    // Встановлюємо action форми
-    document.getElementById('addForm').action = WEB_APP_URL;
 
     function showToast(msg, duration) {
       const t = document.getElementById('toast');
