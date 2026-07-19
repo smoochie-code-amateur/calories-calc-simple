@@ -188,6 +188,7 @@
         document.getElementById('resultCard').style.display = 'none';
         return;
       }
+      barcodeInput.value = '';
       const filtered = products.filter(p =>
         p.name.toLowerCase().includes(q) ||
         (p.code && p.code.includes(q))
@@ -243,6 +244,9 @@
 
     function lookupBarcode(code) {
       if (!code) return;
+      searchInput.value = '';
+      productList.style.display = 'none';
+      notFoundMsg.style.display = 'none';
       const p = products.find(x => x.code === code);
       if (p) {
         selectProduct(p);
