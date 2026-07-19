@@ -122,39 +122,42 @@
       ➕ Додати продукт у базу
     </button>
 
-    <!-- ФОРМА ДОДАВАННЯ -->
+    <!-- ФОРМА ДОДАВАННЯ (відкривається в новій вкладці) -->
     <div class="card" id="addFormCard" style="display:none;">
       <h2 style="font-size:16px;margin-bottom:12px;">➕ Новий продукт</h2>
+      <p style="font-size:13px;color:#666;margin-bottom:12px;">Форма відкриється в новій вкладці. Після додавання закрий її та онови цю сторінку.</p>
 
-      <label>Назва *</label>
-      <input type="text" id="newName" placeholder="Наприклад: Огірок">
+      <form method="POST" target="_blank" id="addForm">
+        <label for="newName">Назва *</label>
+        <input type="text" name="name" id="newName" placeholder="Наприклад: Огірок" required>
 
-      <div class="form-grid">
-        <div>
-          <label>Ккал</label>
-          <input type="number" id="newKkal" step="0.1" value="0" placeholder="0">
+        <div class="form-grid">
+          <div>
+            <label for="newKkal">Ккал</label>
+            <input type="number" name="kkal" id="newKkal" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="newProt">Білки</label>
+            <input type="number" name="prot" id="newProt" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="newFat">Жири</label>
+            <input type="number" name="fat" id="newFat" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="newCarbs">Вуглеводи</label>
+            <input type="number" name="carbs" id="newCarbs" step="0.1" value="0">
+          </div>
         </div>
-        <div>
-          <label>Білки</label>
-          <input type="number" id="newProt" step="0.1" value="0" placeholder="0">
-        </div>
-        <div>
-          <label>Жири</label>
-          <input type="number" id="newFat" step="0.1" value="0" placeholder="0">
-        </div>
-        <div>
-          <label>Вуглеводи</label>
-          <input type="number" id="newCarbs" step="0.1" value="0" placeholder="0">
-        </div>
-      </div>
 
-      <label>Штрихкод (якщо є)</label>
-      <input type="text" id="newCode" placeholder="4850001001010">
+        <label for="newCode">Штрихкод (якщо є)</label>
+        <input type="text" name="code" id="newCode" placeholder="4850001001010">
 
-      <div class="flex-row" style="gap:8px;">
-        <button class="btn-green" onclick="addProductFromForm()" style="margin-bottom:0;">💾</button>
-        <button class="btn-outline" onclick="toggleAddForm()" style="margin-bottom:0;">✖</button>
-      </div>
+        <div class="flex-row" style="gap:8px;">
+          <button type="submit" class="btn-green" style="margin-bottom:0;">💾 Додати</button>
+          <button type="button" class="btn-outline" onclick="toggleAddForm()" style="margin-bottom:0;">✖ Скасувати</button>
+        </div>
+      </form>
     </div>
 
     <div id="successBanner" class="success-banner">✅ Продукт додано! Онови сторінку, щоб побачити.</div>
@@ -354,54 +357,8 @@
       }
     }
 
-    function addProductFromForm() {
-      const name = document.getElementById('newName').value.trim();
-      const kkal = document.getElementById('newKkal').value;
-      const prot = document.getElementById('newProt').value;
-      const fat = document.getElementById('newFat').value;
-      const carbs = document.getElementById('newCarbs').value;
-      const code = document.getElementById('newCode').value.trim();
-
-      if (!name) { showToast('❌ Введи назву'); return; }
-
-      const body = new URLSearchParams({
-        name, kkal, prot, fat, carbs, code
-      });
-
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body.toString()
-      }).then(() => {
-        // no-cors не дає прочитати відповідь, але запит пішов
-        document.getElementById('addFormCard').style.display = 'none';
-        document.getElementById('toggleAddBtn').textContent = '➕ Додати продукт у базу';
-        document.getElementById('successBanner').style.display = 'block';
-
-        // Додаємо локально, щоб одразу бачити
-        products.push({
-          name: name,
-          kkal: parseFloat(kkal) || 0,
-          prot: parseFloat(prot) || 0,
-          fat: parseFloat(fat) || 0,
-          carbs: parseFloat(carbs) || 0,
-          code: code
-        });
-
-        // Очищаємо форму
-        document.getElementById('newName').value = '';
-        document.getElementById('newKkal').value = '0';
-        document.getElementById('newProt').value = '0';
-        document.getElementById('newFat').value = '0';
-        document.getElementById('newCarbs').value = '0';
-        document.getElementById('newCode').value = '';
-
-        showToast('✅ "' + name + '" додано!', 3000);
-      }).catch(() => {
-        showToast('❌ Помилка. Спробуй ще раз.', 3000);
-      });
-    }
+    // Встановлюємо action форми
+    document.getElementById('addForm').action = WEB_APP_URL;
 
     function showToast(msg, duration) {
       const t = document.getElementById('toast');
