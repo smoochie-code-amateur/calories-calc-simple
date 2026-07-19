@@ -175,12 +175,15 @@
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(doSearch, 200);
     });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+    });
 
     function doSearch() {
       const q = searchInput.value.toLowerCase().trim();
+      notFoundMsg.style.display = 'none';
       if (!q) {
         productList.style.display = 'none';
-        notFoundMsg.style.display = 'none';
         currentProduct = null;
         document.getElementById('resultCard').style.display = 'none';
         return;
@@ -232,12 +235,25 @@
     // ШТРИХКОД
     const barcodeInput = document.getElementById('barcodeInput');
     barcodeInput.addEventListener('input', () => {
-      const code = barcodeInput.value.trim();
+      lookupBarcode(barcodeInput.value.trim());
+    });
+    barcodeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(barcodeInput.value.trim()); }
+    });
+
+    function lookupBarcode(code) {
       if (!code) return;
       const p = products.find(x => x.code === code);
-      if (p) { selectProduct(p); }
-      else { currentProduct = null; document.getElementById('resultCard').style.display = 'none'; }
-    });
+      if (p) {
+        selectProduct(p);
+        showToast('✅ ' + p.name, 2000);
+      } else {
+        currentProduct = null;
+        document.getElementById('resultCard').style.display = 'none';
+        notFoundMsg.innerHTML = '📷 Код: ' + code + '<br><a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
+        notFoundMsg.style.display = 'block';
+      }
+    }
 
     // СКАНЕР
     function toggleScanner() {
@@ -264,16 +280,7 @@
     function onScanSuccess(decodedText) {
       stopScanner();
       barcodeInput.value = decodedText;
-      const p = products.find(x => x.code === decodedText);
-      if (p) { selectProduct(p); showToast('✅ ' + p.name); }
-      else {
-        searchInput.value = '';
-        currentProduct = null;
-        document.getElementById('resultCard').style.display = 'none';
-        notFoundMsg.innerHTML = '📷 Код: ' + decodedText + '<br><a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
-        notFoundMsg.style.display = 'block';
-        showToast('📷 Код не знайдено', 3000);
-      }
+      lookupBarcode(decodedText);
     }
 
     // ВАГА
