@@ -303,6 +303,39 @@
         c.height = img.height * scale;
         const ctx = c.getContext('2d');
         ctx.drawImage(img, 0, 0, c.width, c.height);
+
+        // підвищення контрасту та чіткості
+        var d = ctx.getImageData(0, 0, c.width, c.height);
+        var pix = d.data;
+        for (var i = 0; i < pix.length; i += 4) {
+          var r = pix[i], g = pix[i+1], b = pix[i+2];
+          var gray = r * 0.299 + g * 0.587 + b * 0.114;
+          var contrast = 1.4;
+          var bright = 20;
+          gray = (gray - 128) * contrast + 128 + bright;
+          gray = gray < 0 ? 0 : gray > 255 ? 255 : gray;
+          pix[i] = pix[i+1] = pix[i+2] = Math.round(gray);
+        }
+        ctx.putImageData(d, 0, 0);
+
+        // sharpen
+        var sd = ctx.getImageData(0, 0, c.width, c.height);
+        var sp = sd.data;
+        var out = ctx.createImageData(c.width, c.height);
+        var op = out.data;
+        for (var y = 1; y < c.height - 1; y++) {
+          for (var x = 1; x < c.width - 1; x++) {
+            var idx = (y * c.width + x) * 4;
+            var val = sp[(y-1)*c.width*4 + (x-1)*4]*-1 + sp[(y-1)*c.width*4 + x*4]*-1 + sp[(y-1)*c.width*4 + (x+1)*4]*-1
+                    + sp[y*c.width*4 + (x-1)*4]*-1     + sp[y*c.width*4 + x*4]*9       + sp[y*c.width*4 + (x+1)*4]*-1
+                    + sp[(y+1)*c.width*4 + (x-1)*4]*-1 + sp[(y+1)*c.width*4 + x*4]*-1   + sp[(y+1)*c.width*4 + (x+1)*4]*-1;
+            val = val < 0 ? 0 : val > 255 ? 255 : val;
+            op[idx] = op[idx+1] = op[idx+2] = Math.round(val);
+            op[idx+3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+
         prog.textContent = '🔍 Розпізнавання...';
         Tesseract.recognize(
           c.toDataURL('image/jpeg', 0.8),
