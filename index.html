@@ -6,7 +6,6 @@
   <title>Калькулятор Калорій</title>
   <link rel="icon" href="food.png" type="image/png">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -103,10 +102,7 @@
       <div class="flex-row">
         <input type="text" id="barcodeInput" placeholder="Введи або відскануй...">
         <button class="btn-outline" onclick="toggleScanner()">📷</button>
-        <button class="btn-outline" onclick="document.getElementById('ocrFile').click()">📄</button>
-        <input type="file" id="ocrFile" accept="image/*" style="display:none">
       </div>
-      <div id="ocrProgress" style="display:none;font-size:12px;color:#999;text-align:center;margin:4px 0;"></div>
       <div id="scanner"></div>
 
       <label for="weightInput">⚖️ Вага (г)</label>
@@ -286,113 +282,6 @@
       }
     }
 
-    // OCR
-    document.getElementById('ocrFile').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const prog = document.getElementById('ocrProgress');
-      prog.style.display = 'block';
-      prog.textContent = '🖼 Обробка фото...';
-
-      const img = new Image();
-      img.onload = function() {
-        const maxW = 800;
-        const scale = Math.min(1, maxW / img.width);
-        const c = document.createElement('canvas');
-        c.width = img.width * scale;
-        c.height = img.height * scale;
-        const ctx = c.getContext('2d');
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        const rawDataUrl = c.toDataURL('image/png');
-
-        // підвищення контрасту — greyscale + розтяг гістограми
-        var d = ctx.getImageData(0, 0, c.width, c.height);
-        var pix = d.data;
-        for (var i = 0; i < pix.length; i += 4) {
-          var gray = Math.round(pix[i] * 0.299 + pix[i+1] * 0.587 + pix[i+2] * 0.114);
-          pix[i] = pix[i+1] = pix[i+2] = gray;
-        }
-
-        var min = 255, max = 0;
-        for (var i = 0; i < pix.length; i += 4) {
-          var v = pix[i];
-          if (v < min) min = v;
-          if (v > max) max = v;
-        }
-        var range = max - min;
-        if (range > 0) {
-          for (var i = 0; i < pix.length; i += 4) {
-            var v = Math.round((pix[i] - min) / range * 255);
-            pix[i] = pix[i+1] = pix[i+2] = v;
-          }
-        }
-        ctx.putImageData(d, 0, 0);
-
-        // debug: show processed image
-        var dbg = document.getElementById('ocrDebug');
-        if (!dbg) {
-          dbg = document.createElement('canvas');
-          dbg.id = 'ocrDebug';
-          dbg.style.width = '100%';
-          dbg.style.marginTop = '8px';
-          dbg.style.border = '1px solid #ccc';
-          dbg.style.borderRadius = '6px';
-          document.getElementById('ocrFile').parentNode.appendChild(dbg);
-        }
-        dbg.width = c.width;
-        dbg.height = c.height;
-        dbg.getContext('2d').drawImage(c, 0, 0);
-
-        prog.textContent = '🔍 Розпізнавання...';
-        Tesseract.recognize(
-          rawDataUrl,
-          'ukr+eng',
-          {
-            logger: function(m) {
-              if (m.status === 'recognizing text') {
-                prog.textContent = '🔍 ' + Math.round(m.progress * 100) + '%';
-              }
-            },
-            tessedit_pageseg_mode: 6
-          }
-        ).then(function(r) {
-          prog.style.display = 'none';
-          const text = r.data.text;
-          if (!text.trim()) { showToast('❌ Не вдалось прочитати текст'); return; }
-
-          const words = text.toLowerCase().split(/[\s,;:.!?()\n]+/).filter(function(w) { return w.length > 2; });
-          var bestMatch = null, bestScore = 0;
-
-          for (var i = 0; i < items.length; i++) {
-            var itemWords = items[i].name.toLowerCase().split(/[\s,;:.!?()\n]+/).filter(function(w) { return w.length > 2; });
-            if (itemWords.length === 0) continue;
-            var score = 0;
-            for (var wi = 0; wi < itemWords.length; wi++) {
-              for (var wj = 0; wj < words.length; wj++) {
-                if (words[wj].indexOf(itemWords[wi]) !== -1 || itemWords[wi].indexOf(words[wj]) !== -1) {
-                  score++;
-                }
-              }
-            }
-            score = score / itemWords.length;
-            if (score > bestScore) { bestScore = score; bestMatch = items[i]; }
-          }
-
-          if (bestMatch && bestScore >= 0.5) {
-            selectItem(bestMatch);
-            showToast('✅ ' + bestMatch.name, 2000);
-          } else {
-            searchInput.value = '';
-            showToast('❌ Не знайдено: продукт не в базі', 3000);
-          }
-        }).catch(function(err) {
-          prog.style.display = 'none';
-          showToast('❌ Помилка OCR: ' + err.message);
-        });
-      };
-      img.onerror = function() { prog.style.display = 'none'; showToast('❌ Не вдалось завантажити фото'); };
-      img.src = URL.createObjectURL(file);
-    });
 
     // СКАНЕР
     function toggleScanner() {
