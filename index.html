@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ФудЛук</title>
+  <title>Калькулятор Калорій</title>
   <link rel="icon" href="food.png" type="image/png">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
@@ -64,19 +64,13 @@
     .toast.show { opacity: 1; }
     .not-found { text-align: center; color: #999; font-size: 14px; padding: 6px; }
     .loading { text-align: center; color: #999; font-size: 14px; padding: 20px; }
-
-    /* Tabs */
-    .tab-bar {
-      display: flex; gap: 4px; margin-bottom: 10px;
-    }
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 10px; }
     .tab-bar button {
       flex: 1; padding: 10px; font-size: 13px; font-weight: 600;
       background: #e0e0e0; color: #555; border-radius: 8px 8px 0 0;
       border: none; cursor: pointer; margin-bottom: 0;
     }
     .tab-bar button.active { background: #fff; color: #2196F3; }
-
-    /* Profile */
     .profile-photo {
       width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
       margin: 0 auto 10px; display: block; background: #e0e0e0;
@@ -85,28 +79,17 @@
     .profile-stats div { background: #f5f5f5; padding: 8px; border-radius: 8px; }
     .profile-stats .num { font-size: 18px; font-weight: 700; color: #2196F3; display: block; }
     .profile-stats .lbl { font-size: 11px; color: #888; }
-
-    /* Diary */
-    .diary-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .diary-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; align-items: center; }
     .diary-item .diary-name { flex: 1; }
     .diary-item .diary-kkal { font-weight: 600; color: #333; min-width: 50px; text-align: right; }
     .diary-item .diary-del { color: #f44336; cursor: pointer; padding: 0 4px; font-size: 16px; }
-    .daily-total { font-weight: 700; font-size: 16px; padding: 6px 0; border-top: 2px solid #2196F3; margin-top: 4px; }
-
-    /* Chart */
-    .chart-wrap { position: relative; width: 100%; max-width: 300px; margin: 10px auto; }
     .chart-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 12px; }
     .chart-row .bar { height: 14px; border-radius: 3px; min-width: 2px; }
     .chart-row .bar-label { min-width: 40px; text-align: right; color: #888; }
-
-    /* Ring */
     .ring-wrap { display: flex; justify-content: center; gap: 20px; margin: 10px 0; flex-wrap: wrap; }
-    .ring-svg { width: 100px; height: 100px; }
     .ring-label { text-align: center; font-size: 11px; color: #888; margin-top: 2px; }
-
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .form-grid .full { grid-column: 1 / -1; }
-
     @media (max-width: 400px) {
       body { padding: 8px; }
       .card { padding: 10px; }
@@ -124,7 +107,6 @@
 
 <div id="content" style="display:none;">
 
-  <!-- Tabs -->
   <div class="tab-bar">
     <button class="active" data-tab="calc" onclick="switchTab('calc')">🥗 Калькулятор</button>
     <button data-tab="profile" onclick="switchTab('profile')">👤 Профіль</button>
@@ -166,29 +148,16 @@
     </button>
 
     <p style="text-align:center;font-size:12px;color:#999;margin-top:12px;">
-      База даних продуктів створена у Google Sheets. Вона не покриває УСІ продукти.
+      База даних продуктів створена у Google Sheets.
     </p>
   </div>
 
   <!-- TAB: Profile -->
   <div id="tabProfile" style="display:none;">
     <div id="loginScreen" class="card">
-      <h1 style="font-size:18px;">🔐 Вхід / Реєстрація</h1>
-      <p style="font-size:13px;color:#888;margin-bottom:12px;text-align:center;">
-        Якщо профіль ще не створено — введіть пароль і він створиться автоматично.
-      </p>
-      <input type="text" id="loginUser" placeholder="Ваше ім'я" value="Мама">
-      <input type="password" id="loginPass" placeholder="Пароль (запам'ятайте його)">
-      <button class="btn-primary" onclick="handleLogin()">🚀 Увійти / Створити</button>
-      <button class="btn-outline" onclick="showRecovery()" style="font-size:13px;">🔑 Забули пароль?</button>
-    </div>
-
-    <div id="recoveryScreen" class="card" style="display:none;">
-      <h1 style="font-size:18px;">🔑 Відновлення пароля</h1>
-      <input type="text" id="recoveryUser" placeholder="Ім'я користувача" value="Мама">
-      <input type="password" id="recoveryPhrase" placeholder="Кодова фраза">
-      <button class="btn-primary" onclick="handleRecovery()">Відновити</button>
-      <button class="btn-outline" onclick="hideRecovery()" style="font-size:13px;">← Назад</button>
+      <h1 style="font-size:18px;">🔐 Вхід</h1>
+      <input type="password" id="loginPass" placeholder="Пароль">
+      <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
     </div>
 
     <div id="profileScreen" class="card" style="display:none;">
@@ -204,17 +173,8 @@
         <div class="full"><label>Норма ккал</label><input type="number" id="editNorm" step="1"></div>
       </div>
       <button class="btn-green" onclick="saveProfile()">💾 Зберегти профіль</button>
-      <button class="btn-outline" onclick="changePass()" style="font-size:13px;">🔑 Змінити пароль</button>
-      <button class="btn-outline" onclick="exportBackup()" style="font-size:13px;">📦 Експорт бекапу</button>
-    </div>
-
-    <div id="changePassScreen" class="card" style="display:none;">
-      <h1 style="font-size:18px;">🔑 Зміна пароля</h1>
-      <input type="password" id="cpOld" placeholder="Старий пароль">
-      <input type="password" id="cpNew" placeholder="Новий пароль">
-      <input type="password" id="cpNew2" placeholder="Повторіть новий пароль">
-      <button class="btn-primary" onclick="handleChangePass()">Змінити</button>
-      <button class="btn-outline" onclick="cancelChangePass()" style="font-size:13px;">← Скасувати</button>
+      <button class="btn-outline" onclick="showExport()" style="font-size:13px;">📦 Експорт даних</button>
+      <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Імпорт даних</button>
     </div>
   </div>
 
@@ -243,7 +203,6 @@
       <button class="btn-green" onclick="addDiaryEntry()" id="addDiaryBtn" disabled>➕ Додати</button>
     </div>
 
-    <!-- Infographics -->
     <div class="card" id="infocard" style="display:none;">
       <h1 style="font-size:16px;margin-bottom:6px;">📊 Інфографіка</h1>
       <div id="ringChart" class="ring-wrap"></div>
@@ -268,8 +227,7 @@ var CATEGORY_EMOJI = {
   'Хліб та випічка':'🍞','Кондитерські вироби':'🍪','Шоколад та цукерки':'🍫','Печиво та вафлі':'🧇','Жувальні цукерки та льодяники':'🍬','Снеки':'🍿',
   'Крупи':'🌾','Макаронні вироби':'🍝','Бобові':'🫘','Сухі сніданки':'🥣',
   'Консерви':'🥫','Соуси та кетчупи':'🥫','Спеції та приправи':'🌿','Трави':'🌿',
-  'Сіль, цукор':'🧂','Мед та варення':'🍯','Олія та оцет':'🫒',
-  'Кава':'☕','Чай':'🍵','Напої':'🥤','Вода':'💧','Алкоголь':'🍷',
+  'Сіль, цукор':'🧂','Мед та варення':'🍯','Олія та оцет':'🫒','Кава':'☕','Чай':'🍵','Напої':'🥤','Вода':'💧','Алкоголь':'🍷',
   'Заморожені продукти':'❄️','Готові страви':'🍱','Дитяче харчування':'🍼','Здорове харчування':'💚'
 };
 function catEmoji(c) {
@@ -279,353 +237,196 @@ function catEmoji(c) {
   return CATEGORY_EMOJI[c] || '';
 }
 
-// ========== API (fetch to Apps Script) ==========
-async function apiPost(action, params) {
-  var fd = new FormData();
-  fd.append('action', action);
-  for (var k in params) fd.append(k, params[k]);
-  var r = await fetch(WEB_APP_URL, { method: 'POST', body: fd });
-  var text = await r.text();
-  try { return JSON.parse(text); } catch(e) { return { success: false, error: text }; }
-}
-
-async function apiGet(action, params) {
-  var url = WEB_APP_URL + '?action=' + encodeURIComponent(action);
-  for (var k in params) url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-  var r = await fetch(url);
-  var text = await r.text();
-  try { return JSON.parse(text); } catch(e) { return { success: false, error: text }; }
-}
+// ========== CRYPTO ==========
 async function deriveKey(password, salt) {
-  var enc = new TextEncoder();
-  var keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  var keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
     keyMaterial,
     { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt']
+    false, ['encrypt', 'decrypt']
   );
 }
+function genSalt() { return crypto.getRandomValues(new Uint8Array(16)); }
+function toB64(u8) { return btoa(String.fromCharCode.apply(null, u8)); }
+function fromB64(str) { return Uint8Array.from(atob(str), function(c) { return c.charCodeAt(0); }); }
 
-function genSalt() {
-  return crypto.getRandomValues(new Uint8Array(16));
-}
-
-function toBase64(u8) {
-  return btoa(String.fromCharCode.apply(null, u8));
-}
-
-function fromBase64(str) {
-  return Uint8Array.from(atob(str), function(c) { return c.charCodeAt(0); });
-}
-
-async function encryptObj(obj, key) {
+async function encrypt(obj, key) {
   var iv = crypto.getRandomValues(new Uint8Array(12));
-  var enc = new TextEncoder();
-  var ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(JSON.stringify(obj)));
-  return toBase64(iv) + ':' + toBase64(new Uint8Array(ciphertext));
+  var ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(JSON.stringify(obj)));
+  return toB64(iv) + ':' + toB64(new Uint8Array(ct));
 }
-
-async function decryptObj(str, key) {
-  var parts = str.split(':');
-  var iv = fromBase64(parts[0]);
-  var ciphertext = fromBase64(parts[1]);
-  var dec = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ciphertext));
+async function decrypt(str, key) {
+  var p = str.split(':');
+  var dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(p[0]) }, key, fromB64(p[1]));
   return JSON.parse(new TextDecoder().decode(dec));
 }
 
-// ========== AUTH ==========
-var _cryptoKey = null;
-var _saltBase64 = null;
-var _currentUser = 'Мама';
-var _profileData = null;
-var _diaryCache = {};
+// ========== AUTH (localStorage) ==========
+var _key = null;
+var _profile = null;
+var _diary = null;
 
-function getStoredKey() {
-  try { return JSON.parse(localStorage.getItem('foodlook_key')); } catch(e) { return null; }
-}
+function hasSalt() { return localStorage.getItem('foodlook_salt') !== null; }
 
-function storeKey(keyBase64, saltBase64) {
-  localStorage.setItem('foodlook_key', JSON.stringify({ key: keyBase64, salt: saltBase64 }));
-}
-
-function clearStoredKey() {
-  localStorage.removeItem('foodlook_key');
-}
-
-async function login(user, password) {
-  var stored = getStoredKey();
-  if (stored) {
-    var salt = fromBase64(stored.salt);
-    _cryptoKey = await deriveKey(password, salt);
-    var test = new Uint8Array(16);
-    crypto.getRandomValues(test);
-    try {
-      var enc = new TextEncoder();
-      await crypto.subtle.encrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, _cryptoKey, enc.encode('test'));
-    } catch(e) { _cryptoKey = null; return false; }
-    _saltBase64 = stored.salt;
-    _currentUser = user;
+async function login(pass) {
+  if (!hasSalt()) {
+    var salt = genSalt();
+    localStorage.setItem('foodlook_salt', toB64(salt));
+    _key = await deriveKey(pass, salt);
+    _profile = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
+    _diary = {};
+    await saveLocal();
     return true;
   }
-  return false;
-}
-
-async function firstTimeSetup(user, password, recoveryPhrase) {
-  var salt = genSalt();
-  _cryptoKey = await deriveKey(password, salt);
-  _saltBase64 = toBase64(salt);
-  _currentUser = user;
-  var keyRaw = new Uint8Array(await crypto.subtle.exportKey('raw', _cryptoKey));
-  storeKey(toBase64(keyRaw), _saltBase64);
-
-  var recoverySalt = genSalt();
-  var recoveryKey = await deriveKey(recoveryPhrase, recoverySalt);
-  var encPass = await encryptObj({ password: password }, recoveryKey);
-  var profile = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
-  var encProfile = await encryptObj(profile, _cryptoKey);
-  return { salt: _saltBase64, encrypted: encProfile, recoverySalt: toBase64(recoverySalt), recoveryEncrypted: encPass };
-}
-
-async function recoverPassword(user, recoveryPhrase) {
-  var res = await apiGet('loadProfile', { user: user });
-  if (!res.success || !res.data) return null;
-  var data = res.data;
-  if (!data || !data.recoverySalt || !data.recoveryEncrypted) return null;
-  var rs = fromBase64(data.recoverySalt);
-  var rk = await deriveKey(recoveryPhrase, rs);
+  var salt = fromB64(localStorage.getItem('foodlook_salt'));
+  _key = await deriveKey(pass, salt);
   try {
-    var obj = await decryptObj(data.recoveryEncrypted, rk);
-    return obj.password;
-  } catch(e) { return null; }
+    var pStr = localStorage.getItem('foodlook_profile');
+    _profile = pStr ? await decrypt(pStr, _key) : { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
+    var dStr = localStorage.getItem('foodlook_diary');
+    _diary = dStr ? await decrypt(dStr, _key) : {};
+    return true;
+  } catch(e) { _key = null; return false; }
+}
+
+async function saveLocal() {
+  if (!_key) return;
+  localStorage.setItem('foodlook_profile', await encrypt(_profile, _key));
+  localStorage.setItem('foodlook_diary', await encrypt(_diary, _key));
 }
 
 async function handleLogin() {
-  var user = document.getElementById('loginUser').value.trim();
   var pass = document.getElementById('loginPass').value;
-  if (!user || !pass) { showToast('❌ Заповни всі поля'); return; }
-
-  var ok = await login(user, pass);
+  if (!pass) { showToast('❌ Введи пароль'); return; }
+  var ok = await login(pass);
   if (ok) {
     showToast('✅ Увійшов');
-    await loadProfileData();
     showProfileScreen();
     loadTodayDiary();
-    return;
-  }
-
-  var res = await apiGet('loadProfile', { user: user });
-  if (!res.success) { showToast('❌ ' + (res.error || 'Помилка сервера')); return; }
-  var data = res.data;
-
-  if (!data || !data.salt) {
-    var ph = prompt('🔐 Перший вхід. Придумайте кодову фразу для відновлення пароля:');
-    if (!ph) { showToast('❌ Кодова фраза обов\'язкова'); return; }
-    var setup = await firstTimeSetup(user, pass, ph);
-    var saveRes = await apiPost('saveProfile', {
-      user: user,
-      salt: setup.salt,
-      encrypted: setup.encrypted,
-      recoverySalt: setup.recoverySalt || '',
-      recoveryEncrypted: setup.recoveryEncrypted || ''
-    });
-    if (saveRes.success) {
-      showToast('✅ Профіль створено');
-      _profileData = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
-      showProfileScreen();
-    } else {
-      showToast('❌ ' + (saveRes.error || 'Помилка'));
-    }
-    return;
-  }
-
-  var salt = fromBase64(data.salt);
-  var key = await deriveKey(pass, salt);
-  try {
-    var test = await decryptObj(data.encrypted, key);
-    _cryptoKey = key;
-    _saltBase64 = data.salt;
-    _currentUser = user;
-    var keyRaw = new Uint8Array(await crypto.subtle.exportKey('raw', key));
-    storeKey(toBase64(keyRaw), data.salt);
-    showToast('✅ Увійшов');
-    _profileData = test;
-    showProfileScreen();
-    loadTodayDiary();
-  } catch(e) {
+    document.getElementById('loginPass').value = '';
+  } else {
     showToast('❌ Невірний пароль');
   }
 }
 
-function showRecovery() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('recoveryScreen').style.display = 'block';
-  document.getElementById('recoveryUser').value = document.getElementById('loginUser').value;
-}
+// enter key to login
+document.getElementById('loginPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
 
-function hideRecovery() {
-  document.getElementById('recoveryScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'block';
-}
-
-async function handleRecovery() {
-  var user = document.getElementById('recoveryUser').value.trim();
-  var phrase = document.getElementById('recoveryPhrase').value;
-  if (!user || !phrase) { showToast('❌ Заповни всі поля'); return; }
-  var pass = await recoverPassword(user, phrase);
-  if (pass) {
-    document.getElementById('loginUser').value = user;
-    document.getElementById('loginPass').value = pass;
-    hideRecovery();
-    showToast('✅ Пароль відновлено');
-    handleLogin();
-  } else {
-    showToast('❌ Невірна кодова фраза');
-  }
-}
+// ⏎ на diaryWeight теж додає
+document.getElementById('diaryWeight').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !document.getElementById('addDiaryBtn').disabled) addDiaryEntry();
+});
 
 // ========== PROFILE ==========
 function showProfileScreen() {
-  if (!_profileData) { _profileData = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' }; }
+  if (!_profile) _profile = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
   document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('recoveryScreen').style.display = 'none';
   document.getElementById('profileScreen').style.display = 'block';
-  document.getElementById('changePassScreen').style.display = 'none';
   renderProfile();
 }
 
 function renderProfile() {
-  var p = _profileData;
-  document.getElementById('pWeight').textContent = p.weight || '—';
-  document.getElementById('pHeight').textContent = p.height || '—';
-  document.getElementById('pNorm').textContent = p.kcalNorm || '—';
-  document.getElementById('editWeight').value = p.weight || '';
-  document.getElementById('editHeight').value = p.height || '';
-  document.getElementById('editNorm').value = p.kcalNorm || '';
+  document.getElementById('pWeight').textContent = _profile.weight || '—';
+  document.getElementById('pHeight').textContent = _profile.height || '—';
+  document.getElementById('pNorm').textContent = _profile.kcalNorm || '—';
+  document.getElementById('editWeight').value = _profile.weight || '';
+  document.getElementById('editHeight').value = _profile.height || '';
+  document.getElementById('editNorm').value = _profile.kcalNorm || '';
   var photo = document.getElementById('profilePhoto');
-  if (p.photoUrl) { photo.src = p.photoUrl; } else { photo.src = ''; photo.style.background = '#e0e0e0'; }
+  if (_profile.photoUrl) { photo.src = _profile.photoUrl; photo.style.background = ''; }
+  else { photo.src = ''; photo.style.background = '#e0e0e0'; }
 }
 
 function changePhoto() {
-  var url = prompt('📷 Введи URL фото (або залиш порожнім, щоб прибрати):', _profileData.photoUrl || '');
-  if (url !== null) {
-    _profileData.photoUrl = url;
-    renderProfile();
-  }
+  var url = prompt('📷 URL фото (або порожньо — прибрати):', _profile.photoUrl || '');
+  if (url !== null) { _profile.photoUrl = url; renderProfile(); }
 }
 
 async function saveProfile() {
-  if (!_cryptoKey) { showToast('❌ Спочатку увійди'); return; }
-  _profileData.weight = parseFloat(document.getElementById('editWeight').value) || 0;
-  _profileData.height = parseFloat(document.getElementById('editHeight').value) || 0;
-  _profileData.kcalNorm = parseFloat(document.getElementById('editNorm').value) || 0;
-
-  var enc = await encryptObj(_profileData, _cryptoKey);
-  var res = await apiPost('saveProfile', {
-    user: _currentUser,
-    salt: _saltBase64,
-    encrypted: enc,
-    recoverySalt: '',
-    recoveryEncrypted: ''
-  });
-  if (res.success) {
-    showToast('✅ Профіль збережено');
-    renderProfile();
-  } else {
-    showToast('❌ ' + (res.error || 'Помилка'));
-  }
+  if (!_key) { showToast('❌ Спочатку увійди'); return; }
+  _profile.weight = parseFloat(document.getElementById('editWeight').value) || 0;
+  _profile.height = parseFloat(document.getElementById('editHeight').value) || 0;
+  _profile.kcalNorm = parseFloat(document.getElementById('editNorm').value) || 0;
+  await saveLocal();
+  showToast('✅ Профіль збережено');
+  renderProfile();
 }
 
-async function loadProfileData() {
-  var res = await apiGet('loadProfile', { user: _currentUser });
-  if (res.success && res.data && res.data.encrypted && _cryptoKey) {
-    try {
-      _profileData = await decryptObj(res.data.encrypted, _cryptoKey);
-    } catch(e) { _profileData = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' }; }
-  } else {
-    _profileData = { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
-  }
+// ========== EXPORT / IMPORT ==========
+function showExport() {
+  var pass = prompt('📦 Введіть пароль для шифрування бекапу:');
+  if (!pass) return;
+  doExport(pass);
 }
 
-function changePass() {
-  document.getElementById('profileScreen').style.display = 'none';
-  document.getElementById('changePassScreen').style.display = 'block';
+async function doExport(pass) {
+  var salt = genSalt();
+  var expKey = await deriveKey(pass, salt);
+  var data = { profile: _profile || {}, diary: _diary || {} };
+  var encrypted = await encrypt(data, expKey);
+  var json = JSON.stringify({ v: 1, salt: toB64(salt), data: encrypted });
+  var blob = new Blob([json], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'foodlook-backup.json'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Бекап створено');
+  localStorage.setItem('foodlook_backup', Date.now().toString());
 }
 
-function cancelChangePass() {
-  document.getElementById('changePassScreen').style.display = 'none';
-  document.getElementById('profileScreen').style.display = 'block';
+function showImport() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var pass = prompt('📂 Введіть пароль для розшифрування бекапу:');
+      if (!pass) return;
+      doImport(ev.target.result, pass);
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
-async function handleChangePass() {
-  var old = document.getElementById('cpOld').value;
-  var n1 = document.getElementById('cpNew').value;
-  var n2 = document.getElementById('cpNew2').value;
-  if (!old || !n1 || !n2) { showToast('❌ Заповни всі поля'); return; }
-  if (n1 !== n2) { showToast('❌ Новий пароль не співпадає'); return; }
-
-  // verify old password
-  var stored = getStoredKey();
-  if (!stored) { showToast('❌ Немає збереженого ключа'); return; }
-  var salt = fromBase64(stored.salt);
-  var oldKey = await deriveKey(old, salt);
+async function doImport(jsonStr, pass) {
   try {
-    var test = await decryptObj(_saltBase64 + ':dGVzdA==', oldKey);
-  } catch(e) { showToast('❌ Невірний старий пароль'); return; }
+    var pkg = JSON.parse(jsonStr);
+    var salt = fromB64(pkg.salt);
+    var impKey = await deriveKey(pass, salt);
+    var data = await decrypt(pkg.data, impKey);
 
-  // re-encrypt everything with new key
-  var newSalt = genSalt();
-  var newKey = await deriveKey(n1, newSalt);
-  var newEncProfile = await encryptObj(_profileData, newKey);
-  var newSaltB64 = toBase64(newSalt);
+    if (!_key) {
+      // set up if not logged in
+      localStorage.setItem('foodlook_salt', toB64(genSalt()));
+      var ls = fromB64(localStorage.getItem('foodlook_salt'));
+      _key = await deriveKey(prompt('🔐 Пароль для локального входу (придумайте):'), ls);
+    }
 
-  // save
-  var saveRes = await apiPost('saveProfile', {
-    user: _currentUser,
-    salt: newSaltB64,
-    encrypted: newEncProfile,
-    recoverySalt: '',
-    recoveryEncrypted: ''
-  });
-  if (saveRes.success) {
-    _cryptoKey = newKey;
-    _saltBase64 = newSaltB64;
-    var keyRaw = new Uint8Array(await crypto.subtle.exportKey('raw', newKey));
-    storeKey(toBase64(keyRaw), newSaltB64);
-    showToast('✅ Пароль змінено');
-    cancelChangePass();
-  } else {
-    showToast('❌ ' + (saveRes.error || 'Помилка'));
+    _profile = data.profile || { weight: 0, height: 0, kcalNorm: 0, photoUrl: '' };
+    _diary = data.diary || {};
+    await saveLocal();
+    showToast('✅ Дані імпортовано');
+    if (document.getElementById('profileScreen').style.display === 'block') renderProfile();
+    loadTodayDiary();
+  } catch(e) {
+    showToast('❌ Помилка: невірний пароль або пошкоджений файл');
   }
 }
 
-async function exportBackup() {
-  showToast('⏳ Створення бекапу...');
-  var res = await apiGet('exportAllData', { user: _currentUser });
-  if (res.success) {
-    var jsonStr = JSON.stringify(res.data);
-    var blob = new Blob([jsonStr], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = 'foodlook-backup.json'; a.click();
-    URL.revokeObjectURL(url);
-    showToast('✅ Бекап завантажено');
-  } else {
-    showToast('❌ ' + (res.error || 'Помилка'));
-  }
-}
-
-// auto-backup check
+// check backup weekly
 function checkBackup() {
   try {
     var last = localStorage.getItem('foodlook_backup');
     if (!last || Date.now() - parseInt(last) > 7 * 86400000) {
       setTimeout(function() {
-        if (confirm('📦 Минуло більше тижня з останнього бекапу. Створити?')) {
-          exportBackup();
-          localStorage.setItem('foodlook_backup', Date.now().toString());
-        }
+        if (confirm('📦 Минуло >7 днів з бекапу. Створити зараз?')) showExport();
       }, 5000);
     }
   } catch(e) {}
@@ -633,35 +434,26 @@ function checkBackup() {
 
 // ========== DIARY ==========
 function loadTodayDiary() {
-  if (!_cryptoKey) return;
+  if (!_key) return;
   var today = new Date().toISOString().slice(0,10);
   document.getElementById('diaryDate').value = today;
-  loadDiaryForDate(today);
+  renderDiary(today);
 }
 
-async function loadDiaryForDate(date) {
-  if (!_cryptoKey) return;
-  if (_diaryCache[date]) {
-    renderDiary(date, _diaryCache[date]);
-    return;
-  }
-  var res = await apiGet('loadDiary', { user: _currentUser, fromDate: date, toDate: date });
-  var items = [];
-  if (res.success && res.data && res.data.length > 0) {
-    try {
-      var obj = await decryptObj(res.data[0].encrypted, _cryptoKey);
-      items = obj.items || [];
-    } catch(e) {}
-  }
-  _diaryCache[date] = items;
-  renderDiary(date, items);
+document.getElementById('diaryDate').addEventListener('change', function() {
+  if (this.value) renderDiary(this.value);
+});
+
+function getDiaryItems(date) {
+  return (_diary && _diary[date]) || [];
 }
 
-function renderDiary(date, items) {
+function renderDiary(date) {
   var el = document.getElementById('diaryItems');
   var summary = document.getElementById('diarySummary');
   el.innerHTML = '';
-  if (!items || items.length === 0) {
+  var items = getDiaryItems(date);
+  if (items.length === 0) {
     summary.style.display = 'none';
     el.innerHTML = '<div style="text-align:center;color:#999;font-size:14px;padding:10px;">Записів немає</div>';
     renderInfographics([]);
@@ -679,14 +471,12 @@ function renderDiary(date, items) {
     el.appendChild(d);
   });
 
-  var norm = (_profileData && _profileData.kcalNorm) ? _profileData.kcalNorm : 2000;
-  var pct = Math.round(tKkal / norm * 100);
-
+  var norm = (_profile && _profile.kcalNorm) || 2000;
   document.getElementById('dTotalKkal').textContent = Math.round(tKkal);
   document.getElementById('dTotalProt').textContent = Math.round(tProt) + 'г';
   document.getElementById('dTotalFat').textContent = Math.round(tFat) + 'г';
   document.getElementById('dTotalCarbs').textContent = Math.round(tCarbs) + 'г';
-  document.getElementById('dPercent').textContent = pct + '%';
+  document.getElementById('dPercent').textContent = Math.round(tKkal / norm * 100) + '%';
   summary.style.display = 'block';
 
   renderInfographics(items);
@@ -722,77 +512,52 @@ document.getElementById('diaryWeight').addEventListener('input', function() {
   document.getElementById('addDiaryBtn').disabled = !this.value || !_diarySelected;
 });
 
-document.getElementById('diaryDate').addEventListener('change', function() {
-  var d = this.value;
-  if (d) loadDiaryForDate(d);
-});
-
 async function addDiaryEntry() {
   var p = _diarySelected;
   var w = parseFloat(document.getElementById('diaryWeight').value) || 0;
   if (!p || w <= 0) { showToast('❌ Виберіть продукт та вагу'); return; }
-  if (!_cryptoKey) { showToast('❌ Спочатку увійдіть в профіль'); return; }
+  if (!_key) { showToast('❌ Спочатку увійдіть в профіль'); return; }
   var date = document.getElementById('diaryDate').value || new Date().toISOString().slice(0,10);
   var factor = w / 100;
   var entry = { name: p.name, weight: w, kkal: p.kkal * factor, prot: p.prot * factor, fat: p.fat * factor, carbs: p.carbs * factor };
 
-  var items = _diaryCache[date] || [];
-  items.push(entry);
-  _diaryCache[date] = items;
-
-  var enc = await encryptObj({ items: items }, _cryptoKey);
-  var res = await apiPost('saveDiary', { date: date, user: _currentUser, encrypted: enc });
-  if (res.success) {
-    showToast('✅ Додано');
-    document.getElementById('diarySearch').value = '';
-    document.getElementById('diaryWeight').value = '';
-    _diarySelected = null;
-    document.getElementById('addDiaryBtn').disabled = true;
-    renderDiary(date, items);
-  } else {
-    showToast('❌ ' + (res.error || 'Помилка'));
-    items.pop();
-  }
+  if (!_diary[date]) _diary[date] = [];
+  _diary[date].push(entry);
+  await saveLocal();
+  showToast('✅ Додано');
+  document.getElementById('diarySearch').value = '';
+  document.getElementById('diaryWeight').value = '';
+  _diarySelected = null;
+  document.getElementById('addDiaryBtn').disabled = true;
+  renderDiary(date);
 }
 
 async function deleteDiaryItem(idx) {
   var date = document.getElementById('diaryDate').value;
-  var items = _diaryCache[date] || [];
-  if (idx < 0 || idx >= items.length) return;
-  items.splice(idx, 1);
-  _diaryCache[date] = items;
-  var enc = await encryptObj({ items: items }, _cryptoKey);
-  var res = await apiPost('saveDiary', { date: date, user: _currentUser, encrypted: enc });
-  if (res.success) {
-    renderDiary(date, items);
-  } else {
-    showToast('❌ ' + (res.error || 'Помилка'));
-  }
+  if (!_diary[date] || idx < 0 || idx >= _diary[date].length) return;
+  _diary[date].splice(idx, 1);
+  await saveLocal();
+  renderDiary(date);
 }
 
 // ========== INFOGRAPHICS ==========
 function renderInfographics(items) {
   var card = document.getElementById('infocard');
   if (!items || items.length === 0) { card.style.display = 'none'; return; }
-
   card.style.display = 'block';
 
-  // BZHU ring chart
   var tProt = 0, tFat = 0, tCarbs = 0;
   items.forEach(function(i) { tProt += i.prot; tFat += i.fat; tCarbs += i.carbs; });
   var total = tProt + tFat + tCarbs;
   var ring = document.getElementById('ringChart');
   if (total > 0) {
-    var cProt = tProt / total * 100, cFat = tFat / total * 100, cCarbs = tCarbs / total * 100;
     ring.innerHTML = '';
-    ring.appendChild(makeRing(cProt, '#4CAF50', 'Білки ' + Math.round(cProt) + '%'));
-    ring.appendChild(makeRing(cFat, '#FF9800', 'Жири ' + Math.round(cFat) + '%'));
-    ring.appendChild(makeRing(cCarbs, '#2196F3', 'Вуглеводи ' + Math.round(cCarbs) + '%'));
+    ring.appendChild(makeRing(tProt / total * 100, '#4CAF50', 'Білки'));
+    ring.appendChild(makeRing(tFat / total * 100, '#FF9800', 'Жири'));
+    ring.appendChild(makeRing(tCarbs / total * 100, '#2196F3', 'Вуглеводи'));
   }
-
-  // weekly chart
   var weekEl = document.getElementById('weekChart');
-  if (_profileData && _profileData.kcalNorm) {
+  if (_profile && _profile.kcalNorm) {
     renderWeekChart(weekEl);
   } else {
     weekEl.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;">Встановіть норму ккал в профілі</div>';
@@ -803,120 +568,72 @@ function makeRing(pct, color, label) {
   var wrap = document.createElement('div');
   wrap.style.textAlign = 'center';
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('width', '90');
-  svg.setAttribute('height', '90');
-  svg.setAttribute('viewBox', '0 0 36 36');
-  var r = 15.9;
-  var circ = 2 * Math.PI * r;
-  var offset = circ - (pct / 100) * circ;
-  var bg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  bg.setAttribute('cx', '18'); bg.setAttribute('cy', '18'); bg.setAttribute('r', '' + r);
-  bg.setAttribute('fill', 'none'); bg.setAttribute('stroke', '#e0e0e0'); bg.setAttribute('stroke-width', '3');
-  svg.appendChild(bg);
-  var fg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  fg.setAttribute('cx', '18'); fg.setAttribute('cy', '18'); fg.setAttribute('r', '' + r);
-  fg.setAttribute('fill', 'none'); fg.setAttribute('stroke', color); fg.setAttribute('stroke-width', '3');
-  fg.setAttribute('stroke-dasharray', '' + circ);
-  fg.setAttribute('stroke-dashoffset', '' + offset);
-  fg.setAttribute('transform', 'rotate(-90 18 18)');
-  svg.appendChild(fg);
-  var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  txt.setAttribute('x', '18'); txt.setAttribute('y', '20');
-  txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('font-size', '6'); txt.setAttribute('font-weight', '700');
-  txt.textContent = Math.round(pct) + '%';
-  svg.appendChild(txt);
+  svg.setAttribute('width', '90'); svg.setAttribute('height', '90'); svg.setAttribute('viewBox', '0 0 36 36');
+  var r = 15.9, circ = 2 * Math.PI * r;
+  ['#e0e0e0', color].forEach(function(stroke, i) {
+    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '18'); circle.setAttribute('cy', '18'); circle.setAttribute('r', '' + r);
+    circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', stroke); circle.setAttribute('stroke-width', '3');
+    if (i === 1) {
+      circle.setAttribute('stroke-dasharray', '' + circ);
+      circle.setAttribute('stroke-dashoffset', '' + (circ - pct / 100 * circ));
+      circle.setAttribute('transform', 'rotate(-90 18 18)');
+    }
+    svg.appendChild(circle);
+  });
   wrap.appendChild(svg);
   var lbl = document.createElement('div');
   lbl.className = 'ring-label';
-  lbl.textContent = label;
+  lbl.textContent = Math.round(pct) + '% ' + label;
   wrap.appendChild(lbl);
   return wrap;
 }
 
 function renderWeekChart(el) {
+  var norm = (_profile && _profile.kcalNorm) || 2000;
   var dates = [];
   var today = new Date();
   for (var i = 6; i >= 0; i--) {
-    var d = new Date(today);
-    d.setDate(d.getDate() - i);
+    var d = new Date(today); d.setDate(d.getDate() - i);
     dates.push(d.toISOString().slice(0,10));
   }
 
-  var norm = (_profileData && _profileData.kcalNorm) || 2000;
-  var loaded = {};
-
-  Promise.all(dates.map(async function(d) {
-    if (_diaryCache[d]) {
-      loaded[d] = _diaryCache[d];
-      return;
-    }
-    var res = await apiGet('loadDiary', { user: _currentUser, fromDate: d, toDate: d });
-    if (res.success && res.data && res.data.length > 0) {
-      try {
-        var obj = await decryptObj(res.data[0].encrypted, _cryptoKey);
-        _diaryCache[d] = obj.items || [];
-        loaded[d] = _diaryCache[d];
-      } catch(e) { loaded[d] = []; }
-    } else { loaded[d] = []; }
-  })).then(function() {
-    el.innerHTML = '<div style="font-size:14px;font-weight:600;margin-bottom:4px;text-align:center;">Останні 7 днів</div>';
-    var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
-    dates.forEach(function(d, idx) {
-      var items = loaded[d] || [];
-      var kkal = 0;
-      items.forEach(function(it) { kkal += it.kkal; });
-      var pct = Math.min(100, kkal / norm * 100);
-      var dayName = dayNames[new Date(d).getDay()];
-      var dateLabel = d.slice(5);
-
-      var row = document.createElement('div');
-      row.className = 'chart-row';
-      var color = pct > 100 ? '#f44336' : (pct > 80 ? '#4CAF50' : '#FF9800');
-      row.innerHTML = '<span style="min-width:40px;">' + dayName + '</span>' +
-        '<div class="bar" style="width:' + Math.max(2, pct) + '%;background:' + color + ';"></div>' +
-        '<span class="bar-label">' + Math.round(kkal) + '</span>';
-      el.appendChild(row);
-    });
+  el.innerHTML = '<div style="font-size:14px;font-weight:600;margin-bottom:4px;text-align:center;">Останні 7 днів</div>';
+  var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+  dates.forEach(function(d) {
+    var items = getDiaryItems(d);
+    var kkal = 0;
+    items.forEach(function(it) { kkal += it.kkal; });
+    var pct = Math.min(100, kkal / norm * 100);
+    var row = document.createElement('div');
+    row.className = 'chart-row';
+    var color = pct > 100 ? '#f44336' : (pct > 80 ? '#4CAF50' : '#FF9800');
+    row.innerHTML = '<span style="min-width:40px;">' + dayNames[new Date(d).getDay()] + '</span>' +
+      '<div class="bar" style="width:' + Math.max(2, pct) + '%;background:' + color + ';"></div>' +
+      '<span class="bar-label">' + Math.round(kkal) + '</span>';
+    el.appendChild(row);
   });
 }
 
-// ========== TAB SWITCHING ==========
+// ========== TABS ==========
 function switchTab(tab) {
   document.querySelectorAll('.tab-bar button').forEach(function(b) { b.classList.remove('active'); });
   document.querySelector('.tab-bar button[data-tab="' + tab + '"]').classList.add('active');
-  ['calc','profile','diary'].forEach(function(t) {
-    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+  ['Calc','Profile','Diary'].forEach(function(t) {
+    document.getElementById('tab' + t).style.display = t.toLowerCase() === tab ? 'block' : 'none';
   });
-  if (tab === 'profile' && _cryptoKey) { showProfileScreen(); }
-  if (tab === 'profile' && !_cryptoKey) {
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('recoveryScreen').style.display = 'none';
-    document.getElementById('profileScreen').style.display = 'none';
-    document.getElementById('changePassScreen').style.display = 'none';
+  if (tab === 'profile') {
+    if (_key) { showProfileScreen(); }
+    else {
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('profileScreen').style.display = 'none';
+    }
   }
-  if (tab === 'diary' && _cryptoKey) { loadTodayDiary(); }
-}
-
-// Auto-login on load
-async function autoLogin() {
-  var stored = getStoredKey();
-  if (!stored) return;
-  try {
-    var keyRaw = fromBase64(stored.key);
-    _cryptoKey = await crypto.subtle.importKey('raw', keyRaw, { name: 'AES-GCM' }, false, ['encrypt','decrypt']);
-    _saltBase64 = stored.salt;
-    _currentUser = 'Мама';
-    await loadProfileData();
-    showProfileScreen();
-    checkBackup();
-  } catch(e) { clearStoredKey(); }
+  if (tab === 'diary' && _key) loadTodayDiary();
 }
 
 // ========== EXISTING CALCULATOR ==========
-let html5QrCode = null;
-let scannerRunning = false;
-let items = [];
-let currentItem = null;
+let html5QrCode = null, scannerRunning = false, items = [], currentItem = null;
 
 const foodP = fetch(FOOD_TSV).then(r => r.text()).catch(() => '');
 const dishP = DISH_TSV ? fetch(DISH_TSV).then(r => r.text()).catch(() => '') : Promise.resolve('');
@@ -928,13 +645,10 @@ Promise.all([foodP, dishP]).then(([foodText, dishText]) => {
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split('\t');
       if (cols[0] && cols[0].trim()) {
-        items.push({
-          type: 'product', name: cols[0].trim(),
+        items.push({ type: 'product', name: cols[0].trim(),
           kkal: parseFloat(cols[1]) || 0, prot: parseFloat(cols[2]) || 0,
           fat: parseFloat(cols[3]) || 0, carbs: parseFloat(cols[4]) || 0,
-          code: cols[5] ? cols[5].trim() : '',
-          category: cols[6] ? cols[6].trim() : ''
-        });
+          code: cols[5] ? cols[5].trim() : '', category: cols[6] ? cols[6].trim() : '' });
       }
     }
   }
@@ -943,19 +657,16 @@ Promise.all([foodP, dishP]).then(([foodText, dishText]) => {
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split('\t');
       if (cols[0] && cols[1] && cols[1].trim()) {
-        items.push({
-          type: 'dish', name: cols[1].trim(),
+        items.push({ type: 'dish', name: cols[1].trim(),
           kkal: parseFloat(cols[2]) || 0, prot: parseFloat(cols[3]) || 0,
-          fat: parseFloat(cols[4]) || 0, carbs: parseFloat(cols[5]) || 0,
-          ingredients: cols[6] || ''
-        });
+          fat: parseFloat(cols[4]) || 0, carbs: parseFloat(cols[5]) || 0, ingredients: cols[6] || '' });
       }
     }
   }
   document.getElementById('loadingMsg').style.display = 'none';
   document.getElementById('content').style.display = 'block';
   if (items.length === 0) showToast('❌ База порожня', 4000);
-  autoLogin();
+  checkBackup();
 }).catch(err => {
   document.getElementById('loadingMsg').textContent = '❌ Помилка: ' + err.message;
 });
@@ -978,84 +689,51 @@ searchInput.addEventListener('keydown', (e) => {
 function doSearch() {
   const q = searchInput.value.toLowerCase().trim();
   notFoundMsg.style.display = 'none';
-  if (!q) {
-    productList.style.display = 'none';
-    currentItem = null;
-    document.getElementById('resultCard').style.display = 'none';
-    return;
-  }
+  if (!q) { productList.style.display = 'none'; currentItem = null; document.getElementById('resultCard').style.display = 'none'; return; }
   barcodeInput.value = '';
-  const filtered = items.filter(p =>
-    p.name.toLowerCase().includes(q) ||
-    (p.code && p.code.includes(q))
-  );
+  const filtered = items.filter(p => p.name.toLowerCase().includes(q) || (p.code && p.code.includes(q)));
   if (filtered.length === 0) {
     productList.style.display = 'none';
     notFoundMsg.innerHTML = '❌ Немає в базі. <a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
-    notFoundMsg.style.display = 'block';
-    currentItem = null;
-    document.getElementById('resultCard').style.display = 'none';
-    return;
+    notFoundMsg.style.display = 'block'; currentItem = null; document.getElementById('resultCard').style.display = 'none'; return;
   }
-  if (filtered.length > 20) {
-    productList.style.display = 'none';
-    notFoundMsg.style.display = 'none';
-    return;
-  }
+  if (filtered.length > 20) { productList.style.display = 'none'; notFoundMsg.style.display = 'none'; return; }
   notFoundMsg.style.display = 'none';
   productSelect.innerHTML = '';
   filtered.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p.name;
-    const tag = p.type === 'dish' ? '[🍲] ' : (p.category ? catEmoji(p.category) : '');
-    opt.textContent = tag + p.name + (p.code ? ' [' + p.code + ']' : '');
+    opt.textContent = (p.type === 'dish' ? '[🍲] ' : (p.category ? catEmoji(p.category) : '')) + p.name + (p.code ? ' [' + p.code + ']' : '');
     productSelect.appendChild(opt);
   });
   productList.style.display = 'block';
 }
 
 productSelect.addEventListener('change', () => {
-  const name = productSelect.value;
-  const p = items.find(x => x.name === name);
+  const p = items.find(x => x.name === productSelect.value);
   if (p) selectItem(p);
   productList.style.display = 'none';
 });
 
 function selectItem(p) {
   currentItem = p;
-  const tag = p.type === 'dish' ? '🍲 ' : (p.category ? catEmoji(p.category) : '');
-  searchInput.value = tag + p.name;
-  productList.style.display = 'none';
-  notFoundMsg.style.display = 'none';
-  barcodeInput.value = p.code || '';
-  updateResult();
+  searchInput.value = (p.type === 'dish' ? '🍲 ' : (p.category ? catEmoji(p.category) : '')) + p.name;
+  productList.style.display = 'none'; notFoundMsg.style.display = 'none';
+  barcodeInput.value = p.code || ''; updateResult();
 }
 
 // BARCODE
 const barcodeInput = document.getElementById('barcodeInput');
-barcodeInput.addEventListener('input', () => {
-  lookupBarcode(barcodeInput.value.trim());
-});
-barcodeInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(barcodeInput.value.trim()); }
-});
+barcodeInput.addEventListener('input', () => { lookupBarcode(barcodeInput.value.trim()); });
+barcodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(barcodeInput.value.trim()); } });
 
 function lookupBarcode(code) {
-  productList.style.display = 'none';
-  notFoundMsg.style.display = 'none';
-  searchInput.value = '';
-  if (!code) {
-    currentItem = null;
-    document.getElementById('resultCard').style.display = 'none';
-    return;
-  }
+  productList.style.display = 'none'; notFoundMsg.style.display = 'none'; searchInput.value = '';
+  if (!code) { currentItem = null; document.getElementById('resultCard').style.display = 'none'; return; }
   const p = items.find(x => x.code === code);
-  if (p) {
-    selectItem(p);
-    showToast('✅ ' + p.name, 2000);
-  } else {
-    currentItem = null;
-    document.getElementById('resultCard').style.display = 'none';
+  if (p) { selectItem(p); showToast('✅ ' + p.name, 2000); }
+  else {
+    currentItem = null; document.getElementById('resultCard').style.display = 'none';
     notFoundMsg.innerHTML = '📷 Код: ' + code + '<br><a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#2196F3;">➕ Додати</a>';
     notFoundMsg.style.display = 'block';
   }
@@ -1066,39 +744,20 @@ function toggleScanner() {
   if (scannerRunning) { stopScanner(); return; }
   document.getElementById('scanner').style.display = 'block';
   if (!html5QrCode) html5QrCode = new Html5Qrcode("scanner");
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 250, height: 150 } },
-    onScanSuccess
-  ).then(() => { scannerRunning = true; })
-  .catch(err => showToast('❌ Камера: ' + err));
+  html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, onScanSuccess)
+    .then(() => { scannerRunning = true; }).catch(err => showToast('❌ Камера: ' + err));
 }
-
 function stopScanner() {
-  if (html5QrCode) {
-    html5QrCode.stop().then(() => {
-      scannerRunning = false;
-      document.getElementById('scanner').style.display = 'none';
-    });
-  }
+  if (html5QrCode) html5QrCode.stop().then(() => { scannerRunning = false; document.getElementById('scanner').style.display = 'none'; });
 }
+function onScanSuccess(decodedText) { stopScanner(); barcodeInput.value = decodedText; lookupBarcode(decodedText); }
 
-function onScanSuccess(decodedText) {
-  stopScanner();
-  barcodeInput.value = decodedText;
-  lookupBarcode(decodedText);
-}
-
-// WEIGHT CALC
+// WEIGHT
 const weightInput = document.getElementById('weightInput');
 weightInput.addEventListener('input', updateResult);
-
 function updateResult() {
   const w = parseFloat(weightInput.value) || 0;
-  if (!currentItem || w <= 0) {
-    document.getElementById('resultCard').style.display = 'none';
-    return;
-  }
+  if (!currentItem || w <= 0) { document.getElementById('resultCard').style.display = 'none'; return; }
   const factor = w / 100;
   const tag = currentItem.type === 'dish' ? '🍲 ' : (currentItem.category ? catEmoji(currentItem.category) : '');
   document.getElementById('productName').textContent = tag + currentItem.name;
@@ -1107,23 +766,16 @@ function updateResult() {
   document.getElementById('resFat').textContent = Math.round(currentItem.fat * factor * 10) / 10;
   document.getElementById('resCarbs').textContent = Math.round(currentItem.carbs * factor * 10) / 10;
   const badge = document.getElementById('codeBadge');
-  if (currentItem.code) {
-    badge.textContent = '📦 ' + currentItem.code;
-    badge.style.display = 'inline-block';
-  } else if (currentItem.type === 'dish') {
-    badge.textContent = '🍲 Страва';
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
+  if (currentItem.code) { badge.textContent = '📦 ' + currentItem.code; badge.style.display = 'inline-block'; }
+  else if (currentItem.type === 'dish') { badge.textContent = '🍲 Страва'; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
   document.getElementById('resultCard').style.display = 'block';
 }
 
-function showToast(msg, duration) {
+function showToast(msg, d) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration || 3000);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), d || 3000);
 }
 </script>
 </body>
