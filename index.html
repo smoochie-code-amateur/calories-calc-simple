@@ -133,7 +133,20 @@
   <script>
     const FOOD_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=0&single=true&output=tsv';
     const DISH_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=303617623&single=true&output=tsv';
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRYfkvdsWkl9xo06MgGm2w1gq7V6clk0oeh8chbVQMovud3SDlyRYX3FBljPBm8eXddA/exec';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz8hJ0imA-w7qbqjjOK1BcymP_MoX69ifsh-bu-MORLTp9LW8OyFi50IdYI070BWizi7A/exec';
+
+    var CATEGORY_EMOJI = {
+      'Овочі':'🥬','Фрукти':'🍎','Ягоди':'🫐','Горіхи та сухофрукти':'🥜','Гриби':'🍄',
+      'М\'ясо':'🥩','Птиця':'🍗','Риба':'🐟','Морепродукти':'🦐','Яйця':'🥚',
+      'Молочні продукти':'🥛','Сири':'🧀','Масло та маргарин':'🧈',
+      'Хліб та випічка':'🍞','Кондитерські вироби':'🍪','Шоколад та цукерки':'🍫','Печиво та вафлі':'🧇','Жувальні цукерки та льодяники':'🍬','Снеки':'🍿',
+      'Крупи':'🌾','Макаронні вироби':'🍝','Бобові':'🫘','Сухі сніданки':'🥣',
+      'Консерви':'🥫','Соуси та кетчупи':'🥫','Спеції та приправи':'🌿','Трави':'🌿',
+      'Сіль, цукор':'🧂','Мед та варення':'🍯','Олія та оцет':'🫒',
+      'Кава':'☕','Чай':'🍵','Напої':'🥤','Вода':'💧','Алкоголь':'🍷',
+      'Заморожені продукти':'❄️','Готові страви':'🍱','Дитяче харчування':'🍼','Здорове харчування':'💚'
+    };
+    function catEmoji(c) { return c && CATEGORY_EMOJI[c] ? CATEGORY_EMOJI[c] + ' ' : ''; }
 
     let html5QrCode = null;
     let scannerRunning = false;
@@ -155,7 +168,8 @@
               type: 'product', name: cols[0].trim(),
               kkal: parseFloat(cols[1]) || 0, prot: parseFloat(cols[2]) || 0,
               fat: parseFloat(cols[3]) || 0, carbs: parseFloat(cols[4]) || 0,
-              code: cols[5] ? cols[5].trim() : ''
+              code: cols[5] ? cols[5].trim() : '',
+              category: cols[6] ? cols[6].trim() : ''
             });
           }
         }
@@ -228,7 +242,7 @@
       filtered.forEach(p => {
         const opt = document.createElement('option');
         opt.value = p.name;
-        const tag = p.type === 'dish' ? '[🍲] ' : '';
+        const tag = p.type === 'dish' ? '[🍲] ' : (p.category ? catEmoji(p.category) : '');
         opt.textContent = tag + p.name + (p.code ? ' [' + p.code + ']' : '');
         productSelect.appendChild(opt);
       });
@@ -244,7 +258,7 @@
 
     function selectItem(p) {
       currentItem = p;
-      const tag = p.type === 'dish' ? '🍲 ' : '';
+      const tag = p.type === 'dish' ? '🍲 ' : (p.category ? catEmoji(p.category) : '');
       searchInput.value = tag + p.name;
       productList.style.display = 'none';
       notFoundMsg.style.display = 'none';
@@ -322,7 +336,7 @@
         return;
       }
       const factor = w / 100;
-      const tag = currentItem.type === 'dish' ? '🍲 ' : '';
+      const tag = currentItem.type === 'dish' ? '🍲 ' : (currentItem.category ? catEmoji(currentItem.category) : '');
       document.getElementById('productName').textContent = tag + currentItem.name;
       document.getElementById('resKkal').textContent = Math.round(currentItem.kkal * factor * 10) / 10;
       document.getElementById('resProt').textContent = Math.round(currentItem.prot * factor * 10) / 10;
