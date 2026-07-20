@@ -146,7 +146,12 @@
       'Кава':'☕','Чай':'🍵','Напої':'🥤','Вода':'💧','Алкоголь':'🍷',
       'Заморожені продукти':'❄️','Готові страви':'🍱','Дитяче харчування':'🍼','Здорове харчування':'💚'
     };
-    function catEmoji(c) { return c && CATEGORY_EMOJI[c] ? CATEGORY_EMOJI[c] + ' ' : ''; }
+    function catEmoji(c) {
+      if (!c) return '';
+      var m = c.match(/^(\S+)\s/);
+      if (m && m[1].length > 1) return m[1] + ' '; // already has emoji prefix
+      return CATEGORY_EMOJI[c] ? CATEGORY_EMOJI[c] + ' ' : '';
+    }
 
     let html5QrCode = null;
     let scannerRunning = false;
