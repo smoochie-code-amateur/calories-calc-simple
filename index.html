@@ -7,393 +7,473 @@
   <link rel="icon" href="food.png" type="image/png">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap');
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #FDF5EC;
-      padding: 16px;
+      background: #FEF7EE;
+      padding: 0 20px 32px;
       max-width: 480px;
       margin: 0 auto;
       min-height: 100vh;
       color: #3D2B1F;
     }
 
-    h1 {
+    .app-header {
+      text-align: center;
+      padding: 36px 0 28px;
+      position: relative;
+    }
+    .app-header::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #F4A261, #E8735A);
+      border-radius: 50%;
+      opacity: 0.1;
+      filter: blur(40px);
+    }
+    .app-emoji {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+    }
+    .app-header h1 {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
+      font-size: 30px;
       font-weight: 700;
       color: #3D2B1F;
-      margin-bottom: 14px;
-      text-align: center;
-      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      position: relative;
+    }
+    .app-header .subtitle {
+      font-size: 14px;
+      color: #A08B74;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
     }
 
     .card {
       background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 12px rgba(61, 43, 31, 0.06);
-      border: 1px solid rgba(61, 43, 31, 0.04);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 24px rgba(61, 43, 31, 0.05), 0 1px 4px rgba(61, 43, 31, 0.03);
+      border: none;
+      position: relative;
+      overflow: hidden;
     }
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 70px;
+      height: 70px;
+      border-radius: 0 22px 0 70px;
+      opacity: 0.04;
+    }
+    .card.coral::after { background: #E8735A; }
+    .card.green::after { background: #2D7D5F; }
+    .card.gold::after { background: #D4952E; }
 
     label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #8B7355;
+      font-size: 11px;
+      font-weight: 700;
+      color: #A08B74;
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
 
     input, select {
       width: 100%;
-      padding: 12px 14px;
-      font-size: 15px;
+      padding: 14px 16px;
+      font-size: 16px;
       font-family: 'DM Sans', sans-serif;
-      border: 1.5px solid #E8DDD0;
-      border-radius: 12px;
+      border: 2px solid #F0E8DE;
+      border-radius: 14px;
       outline: none;
-      background: #FDFAF5;
-      margin-bottom: 12px;
+      background: #FDF9F4;
+      margin-bottom: 18px;
       color: #3D2B1F;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
       -webkit-appearance: none;
     }
-
     input:focus, select:focus {
       border-color: #E8735A;
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(232, 115, 90, 0.12);
+      box-shadow: 0 0 0 4px rgba(232, 115, 90, 0.1);
     }
-
-    input::placeholder { color: #BBA98E; }
+    input::placeholder { color: #C8B8A4; }
 
     button {
       width: 100%;
-      padding: 13px;
-      font-size: 15px;
-      font-weight: 600;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
       font-family: 'DM Sans', sans-serif;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
-      margin-bottom: 8px;
-      transition: all 0.2s;
-      letter-spacing: 0.2px;
+      margin-bottom: 10px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.3px;
     }
-
     .btn-primary {
-      background: linear-gradient(135deg, #E8735A, #D4613F);
+      background: linear-gradient(135deg, #E8735A 0%, #D4613F 100%);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(232, 115, 90, 0.3);
+      box-shadow: 0 6px 24px rgba(232, 115, 90, 0.35);
     }
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #D4613F, #C05535);
-      box-shadow: 0 6px 20px rgba(232, 115, 90, 0.4);
-      transform: translateY(-1px);
-    }
+    .btn-primary:hover { box-shadow: 0 8px 32px rgba(232, 115, 90, 0.45); transform: translateY(-2px); }
     .btn-primary:active { transform: translateY(0); }
 
     .btn-green {
-      background: linear-gradient(135deg, #2D7D5F, #1F6B4E);
+      background: linear-gradient(135deg, #3D9B6F 0%, #2D7D5F 100%);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(45, 125, 95, 0.25);
+      box-shadow: 0 6px 24px rgba(61, 155, 111, 0.3);
     }
-    .btn-green:hover {
-      background: linear-gradient(135deg, #1F6B4E, #185A40);
-      box-shadow: 0 6px 20px rgba(45, 125, 95, 0.35);
-      transform: translateY(-1px);
-    }
+    .btn-green:hover { box-shadow: 0 8px 32px rgba(61, 155, 111, 0.4); transform: translateY(-2px); }
     .btn-green:active { transform: translateY(0); }
 
     .btn-orange {
-      background: linear-gradient(135deg, #E8A849, #D4952E);
+      background: linear-gradient(135deg, #F4A261 0%, #E8943A 100%);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(232, 168, 73, 0.25);
+      box-shadow: 0 6px 24px rgba(244, 162, 97, 0.3);
     }
-    .btn-orange:hover {
-      background: linear-gradient(135deg, #D4952E, #C08820);
-      box-shadow: 0 6px 20px rgba(232, 168, 73, 0.35);
-      transform: translateY(-1px);
-    }
+    .btn-orange:hover { box-shadow: 0 8px 32px rgba(244, 162, 97, 0.4); transform: translateY(-2px); }
     .btn-orange:active { transform: translateY(0); }
 
     .btn-red {
-      background: linear-gradient(135deg, #D4564E, #C04038);
+      background: linear-gradient(135deg, #E06050 0%, #C84838 100%);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(212, 86, 78, 0.25);
+      box-shadow: 0 6px 24px rgba(224, 96, 80, 0.3);
     }
-    .btn-red:hover {
-      background: linear-gradient(135deg, #C04038, #A83530);
-      transform: translateY(-1px);
-    }
+    .btn-red:hover { transform: translateY(-2px); }
 
     .btn-outline {
       background: transparent;
-      border: 1.5px solid #E8DDD0;
+      border: 2px solid #F0E8DE;
       color: #6B5744;
     }
-    .btn-outline:hover {
-      background: #FDFAF5;
-      border-color: #D4C4B0;
-    }
+    .btn-outline:hover { background: #FDF9F4; border-color: #E0D4C4; }
 
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #F3EDE4;
-      font-size: 15px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #F5EDE4;
+      font-size: 16px;
     }
     .row:last-child { border-bottom: none; }
 
+    .row-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .row-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .row-icon.kkal { background: #FEF0E8; }
+    .row-icon.prot { background: #E8F5EE; }
+    .row-icon.fat { background: #FFF3E0; }
+    .row-icon.carbs { background: #FFF0E8; }
+
     .val {
       font-weight: 700;
+      font-size: 18px;
       color: #E8735A;
+      font-family: 'Playfair Display', serif;
     }
 
     .badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: linear-gradient(135deg, #FDF0E6, #FAE4D4);
       color: #C0603A;
-      padding: 4px 12px;
+      padding: 8px 16px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
-      margin-top: 6px;
+      margin-top: 10px;
     }
 
-    .flex-row { display: flex; gap: 8px; align-items: center; }
+    .flex-row { display: flex; gap: 10px; align-items: center; }
     .flex-row input { flex: 1; margin-bottom: 0; min-width: 0; }
     .flex-row button {
-      width: 48px;
-      padding: 12px 0;
+      width: 52px;
+      padding: 14px 0;
       margin-bottom: 0;
-      font-size: 18px;
-      border-radius: 12px;
+      font-size: 20px;
+      border-radius: 14px;
     }
 
-    #productSelect {
-      max-height: 150px;
-      border-radius: 12px;
-    }
+    #productSelect { max-height: 160px; border-radius: 14px; }
 
     #scanner {
-      width: 100%;
-      max-width: 100%;
-      margin: 10px 0;
-      display: none;
-      overflow: hidden;
-      border-radius: 12px;
+      width: 100%; max-width: 100%; margin: 14px 0; display: none;
+      overflow: hidden; border-radius: 14px;
     }
     #scanner video { width: 100% !important; max-width: 100% !important; height: auto !important; }
 
     .toast {
       position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(10px);
       background: #3D2B1F;
       color: #FDF5EC;
-      padding: 12px 24px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 500;
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-size: 15px; font-weight: 600;
       opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      z-index: 999;
-      text-align: center;
-      max-width: 90%;
-      box-shadow: 0 8px 30px rgba(61, 43, 31, 0.25);
+      transition: opacity 0.35s, transform 0.35s;
+      pointer-events: none; z-index: 999;
+      text-align: center; max-width: 90%;
+      box-shadow: 0 8px 32px rgba(61, 43, 31, 0.25);
     }
-    .toast.show { opacity: 1; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .not-found {
-      text-align: center;
-      color: #BBA98E;
-      font-size: 14px;
-      padding: 8px;
-    }
+    .not-found { text-align: center; color: #BBA98E; font-size: 14px; padding: 10px; line-height: 1.5; }
 
     .loading {
-      text-align: center;
-      color: #8B7355;
-      font-size: 15px;
-      padding: 40px 20px;
-      font-family: 'Playfair Display', serif;
+      text-align: center; color: #A08B74; font-size: 16px;
+      padding: 60px 20px; font-family: 'Playfair Display', serif;
     }
+    .loading .spinner {
+      display: inline-block;
+      width: 40px; height: 40px;
+      border: 3px solid #F0E8DE;
+      border-top-color: #E8735A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* TAB BAR */
     .tab-bar {
       display: flex;
+      margin-bottom: 20px;
+      background: rgba(240, 232, 222, 0.5);
+      border-radius: 16px;
+      padding: 5px;
       gap: 0;
-      margin-bottom: 14px;
-      background: #F3EDE4;
-      border-radius: 14px;
-      padding: 4px;
     }
     .tab-bar button {
       flex: 1;
-      padding: 11px 8px;
+      padding: 13px 10px;
       font-size: 13px;
       font-weight: 600;
       background: transparent;
-      color: #8B7355;
-      border-radius: 11px;
+      color: #A08B74;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
       margin-bottom: 0;
-      transition: all 0.25s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
     .tab-bar button.active {
       background: #fff;
       color: #E8735A;
-      box-shadow: 0 2px 8px rgba(61, 43, 31, 0.08);
+      box-shadow: 0 3px 12px rgba(61, 43, 31, 0.08);
+      font-weight: 700;
     }
-    .tab-bar button:hover:not(.active) {
-      color: #6B5744;
-    }
+    .tab-bar button:hover:not(.active) { color: #6B5744; background: rgba(255,255,255,0.4); }
 
-    /* PROFILE */
     .profile-photo {
-      width: 88px;
-      height: 88px;
+      width: 96px; height: 96px;
       border-radius: 50%;
       object-fit: cover;
-      margin: 0 auto 12px;
+      margin: 0 auto 16px;
       display: block;
-      background: #F3EDE4;
-      border: 3px solid #E8DDD0;
+      background: linear-gradient(135deg, #F0E8DE, #E8DDD0);
+      border: 4px solid #fff;
+      box-shadow: 0 4px 20px rgba(61, 43, 31, 0.1);
     }
 
     .profile-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 20px;
     }
     .profile-stats div {
-      background: #FDFAF5;
-      padding: 10px 6px;
-      border-radius: 12px;
-      border: 1px solid #F3EDE4;
+      background: #FDF9F4;
+      padding: 14px 8px;
+      border-radius: 14px;
+      border: 1px solid #F0E8DE;
     }
     .profile-stats .num {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
       color: #E8735A;
       display: block;
       font-family: 'Playfair Display', serif;
     }
     .profile-stats .lbl {
-      font-size: 10px;
-      color: #8B7355;
+      font-size: 11px;
+      color: #A08B74;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      display: block;
     }
 
-    /* DIARY */
     .diary-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #F3EDE4;
-      font-size: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #F5EDE4;
+      font-size: 15px;
       align-items: center;
     }
-    .diary-item .diary-name { flex: 1; color: #5A4636; }
+    .diary-item .diary-name { flex: 1; color: #5A4636; padding-right: 12px; }
     .diary-item .diary-kkal {
-      font-weight: 600;
+      font-weight: 700;
       color: #E8735A;
-      min-width: 55px;
+      min-width: 60px;
       text-align: right;
       font-family: 'Playfair Display', serif;
+      font-size: 16px;
     }
     .diary-item .diary-del {
       color: #D4564E;
       cursor: pointer;
-      padding: 0 6px;
+      padding: 4px 8px;
       font-size: 14px;
-      opacity: 0.6;
+      opacity: 0.5;
       transition: opacity 0.2s;
+      border-radius: 8px;
     }
-    .diary-item .diary-del:hover { opacity: 1; }
+    .diary-item .diary-del:hover { opacity: 1; background: #FEF0E8; }
 
-    /* CHARTS */
     .chart-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 5px;
-      font-size: 12px;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 500;
     }
     .chart-row .bar {
-      height: 12px;
-      border-radius: 6px;
-      min-width: 2px;
-      transition: width 0.4s ease;
+      height: 14px;
+      border-radius: 7px;
+      min-width: 3px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .chart-row .bar-label { min-width: 40px; text-align: right; color: #8B7355; font-weight: 500; }
+    .chart-row .bar-label { min-width: 44px; text-align: right; color: #A08B74; }
 
     .ring-wrap {
       display: flex;
       justify-content: center;
-      gap: 24px;
-      margin: 12px 0;
+      gap: 28px;
+      margin: 16px 0;
       flex-wrap: wrap;
     }
     .ring-label {
       text-align: center;
-      font-size: 11px;
-      color: #8B7355;
-      margin-top: 4px;
-      font-weight: 500;
+      font-size: 12px;
+      color: #A08B74;
+      margin-top: 6px;
+      font-weight: 600;
     }
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .form-grid .full { grid-column: 1 / -1; }
 
-    /* SUGGEST DROPDOWN */
     #diarySuggest > div {
-      border-radius: 8px;
-      transition: background 0.15s;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F5EDE4;
+      font-size: 15px;
+      border-radius: 10px;
+      transition: background 0.2s;
     }
-    #diarySuggest > div:hover {
-      background: #FDFAF5;
-    }
+    #diarySuggest > div:last-child { border-bottom: none; }
+    #diarySuggest > div:hover { background: #FDF9F4; }
 
-    /* SCROLLBAR */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #E8DDD0; border-radius: 3px; }
-
-    /* SELECTION */
+    ::-webkit-scrollbar-thumb { background: #E0D4C4; border-radius: 3px; }
     ::selection { background: #E8735A; color: #fff; }
 
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      color: #3D2B1F;
+      margin-bottom: 16px;
+    }
+    .section-label .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 20px;
+      background: linear-gradient(135deg, #FEF0E8, #FDF0E6);
+    }
+
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #3D2B1F;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #F5EDE4;
+    }
+
     @media (max-width: 400px) {
-      body { padding: 10px; }
-      .card { padding: 12px; }
-      input, select { font-size: 14px; padding: 10px; margin-bottom: 10px; }
-      button { padding: 11px; font-size: 14px; }
-      .flex-row button { width: 44px; padding: 10px 0; font-size: 16px; }
-      h1 { font-size: 19px; }
-      .row { font-size: 14px; }
-      .tab-bar button { font-size: 12px; padding: 9px 6px; }
+      body { padding: 0 14px 24px; }
+      .card { padding: 18px; }
+      input, select { font-size: 15px; padding: 12px; margin-bottom: 14px; }
+      button { padding: 14px; font-size: 15px; }
+      .flex-row button { width: 48px; padding: 12px 0; font-size: 18px; }
+      .app-header h1 { font-size: 26px; }
+      .row { font-size: 15px; padding: 12px 0; }
+      .tab-bar button { font-size: 12px; padding: 11px 6px; }
     }
   </style>
 </head>
 <body>
 
-<div id="loadingMsg" class="loading">🍽️ Завантаження...</div>
+<div id="loadingMsg" class="loading">
+  <div class="spinner"></div>
+  <div>Завантаження бази продуктів...</div>
+</div>
 
 <div id="content" style="display:none;">
+
+  <div class="app-header">
+    <span class="app-emoji">🍽️</span>
+    <h1>FoodLook</h1>
+    <div class="subtitle">Калькулятор калорій</div>
+  </div>
 
   <div class="tab-bar">
     <button class="active" data-tab="calc" onclick="switchTab('calc')">🥗 Калькулятор</button>
@@ -403,15 +483,16 @@
 
   <!-- TAB: Calculator -->
   <div id="tabCalc">
-    <div class="card">
-      <label for="searchInput">🔍 Продукт</label>
+    <div class="card coral">
+      <div class="section-label"><span class="icon">🔍</span> Пошук продукту</div>
+      <label for="searchInput">Назва продукту</label>
       <input type="text" id="searchInput" placeholder="Почни вводити назву..." autocomplete="off">
       <div id="productList" style="display:none;">
         <select id="productSelect" size="5"></select>
       </div>
       <div id="notFoundMsg" class="not-found" style="display:none;"></div>
 
-      <label for="barcodeInput">📷 Штрихкод</label>
+      <label for="barcodeInput">Штрихкод</label>
       <div class="flex-row">
         <input type="text" id="barcodeInput" placeholder="Введи або відскануй...">
         <button class="btn-outline" onclick="toggleScanner()">📷</button>
@@ -422,12 +503,24 @@
       <input type="number" id="weightInput" placeholder="0" inputmode="decimal">
     </div>
 
-    <div class="card" id="resultCard" style="display:none;">
-      <div id="productName" style="font-size:18px;font-weight:700;margin-bottom:8px;font-family:'Playfair Display',serif;color:#3D2B1F;"></div>
-      <div class="row"><span>Ккал</span><span class="val" id="resKkal">0</span></div>
-      <div class="row"><span>Білки</span><span class="val" id="resProt">0</span></div>
-      <div class="row"><span>Жири</span><span class="val" id="resFat">0</span></div>
-      <div class="row"><span>Вуглеводи</span><span class="val" id="resCarbs">0</span></div>
+    <div class="card green" id="resultCard" style="display:none;">
+      <div class="product-name" id="productName"></div>
+      <div class="row">
+        <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+        <span class="val" id="resKkal">0</span>
+      </div>
+      <div class="row">
+        <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+        <span class="val" id="resProt">0</span>
+      </div>
+      <div class="row">
+        <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+        <span class="val" id="resFat">0</span>
+      </div>
+      <div class="row">
+        <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+        <span class="val" id="resCarbs">0</span>
+      </div>
       <div id="codeBadge" class="badge" style="display:none;"></div>
     </div>
 
@@ -435,44 +528,47 @@
       ➕ Додати продукт чи рецепт
     </button>
 
-    <p style="text-align:center;font-size:12px;color:#BBA98E;margin-top:14px;">
+    <p style="text-align:center;font-size:12px;color:#BBA98E;margin-top:16px;">
       База даних продуктів створена у Google Sheets.
     </p>
   </div>
 
   <!-- TAB: Profile -->
   <div id="tabProfile" style="display:none;">
-    <div id="createPassScreen" class="card" style="display:none;">
-      <h1 style="font-size:18px;font-family:'Playfair Display',serif;">🔐 Створіть пароль для профілю</h1>
-      <input type="password" id="createPass" placeholder="Придумайте пароль">
+    <div id="createPassScreen" class="card coral" style="display:none;">
+      <div class="section-label"><span class="icon">🔐</span> Створення профілю</div>
+      <label>Придумайте пароль</label>
+      <input type="password" id="createPass" placeholder="Пароль">
+      <label>Повторіть пароль</label>
       <input type="password" id="createPassConfirm" placeholder="Повторіть пароль">
       <button class="btn-primary" onclick="handleCreatePass()">🔐 Створити профіль</button>
-      <p style="font-size:12px;color:#8B7355;margin-top:10px;line-height:1.5;">
+      <p style="font-size:13px;color:#A08B74;margin-top:14px;line-height:1.7;">
         ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері.
         Пароль не зберігається — він використовується для шифрування.
         Якщо забудете пароль, дані буде неможливо відновити.
-        <br>📌 Регулярно створюйте бекап через <strong>Експорт даних</strong>.
+        <br><br>📌 Регулярно створюйте бекап через <strong>Експорт даних</strong>.
       </p>
-      <button class="btn-outline" onclick="showImport()" style="font-size:12px;">📂 Відновити з бекапу</button>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:12px;color:#f44336;">🧹 Очистити всі дані</button>
+      <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Відновити з бекапу</button>
+      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
     </div>
 
-    <div id="loginScreen" class="card" style="display:none;">
-      <h1 style="font-size:18px;font-family:'Playfair Display',serif;">🔐 Введіть пароль</h1>
+    <div id="loginScreen" class="card coral" style="display:none;">
+      <div class="section-label"><span class="icon">🔐</span> Вхід в профіль</div>
+      <label>Ваш пароль</label>
       <input type="password" id="loginPass" placeholder="Пароль">
       <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
-      <p style="font-size:12px;color:#8B7355;margin-top:8px;">
+      <p style="font-size:13px;color:#A08B74;margin-top:12px;">
         ⚠️ Дані зберігаються локально. Забули пароль? Натисніть "Очистити".
       </p>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:12px;color:#f44336;">🧹 Очистити всі дані</button>
+      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
     </div>
 
-    <div id="profileScreen" class="card" style="display:none;">
+    <div id="profileScreen" class="card green" style="display:none;">
       <img id="profilePhoto" class="profile-photo" src="" alt="Фото">
-      <div class="flex-row" style="justify-content:center;margin-bottom:10px;">
-        <button class="btn-outline" onclick="pickPhoto()" style="font-size:12px;width:auto;padding:6px 12px;">📷 Фото</button>
-        <button class="btn-outline" onclick="setPhotoUrl()" style="font-size:12px;width:auto;padding:6px 12px;">🔗 URL</button>
-        <button class="btn-outline" onclick="removePhoto()" style="font-size:12px;width:auto;padding:6px 12px;color:#f44336;">🗑</button>
+      <div class="flex-row" style="justify-content:center;margin-bottom:16px;">
+        <button class="btn-outline" onclick="pickPhoto()" style="font-size:13px;width:auto;padding:8px 16px;">📷 Фото</button>
+        <button class="btn-outline" onclick="setPhotoUrl()" style="font-size:13px;width:auto;padding:8px 16px;">🔗 URL</button>
+        <button class="btn-outline" onclick="removePhoto()" style="font-size:13px;width:auto;padding:8px 16px;color:#E06050;">🗑</button>
       </div>
       <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
       <div class="profile-stats">
@@ -495,8 +591,8 @@
         <div><label>Норма ккал</label><input type="number" id="editNorm" step="1"></div>
         <div class="full">
           <label>📊 Розрахунок норми</label>
-          <div class="flex-row" style="gap:4px;">
-            <button class="btn-outline" onclick="calcBMR()" style="font-size:13px;width:auto;flex:1;padding:10px;">🧮 Розрахувати BMR</button>
+          <div class="flex-row" style="gap:6px;">
+            <button class="btn-outline" onclick="calcBMR()" style="font-size:13px;width:auto;flex:1;padding:12px;">🧮 Розрахувати BMR</button>
             <select id="editDeficit" style="width:auto;flex:1;margin-bottom:0;">
               <option value="-20">-20% (сильний дефіцит)</option>
               <option value="-15">-15%</option>
@@ -509,45 +605,62 @@
               <option value="20">+20% (сильний набір)</option>
             </select>
           </div>
-          <div id="bmrResult" style="font-size:13px;color:#8B7355;margin-top:4px;"></div>
+          <div id="bmrResult" style="font-size:13px;color:#A08B74;margin-top:8px;"></div>
         </div>
       </div>
       <button class="btn-green" onclick="saveProfile()">💾 Зберегти профіль</button>
       <button class="btn-outline" onclick="showExport()" style="font-size:13px;">📦 Експорт даних</button>
       <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Імпорт даних</button>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#f44336;">🧹 Вийти та очистити дані</button>
+      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Вийти та очистити дані</button>
     </div>
   </div>
 
   <!-- TAB: Diary -->
   <div id="tabDiary" style="display:none;">
-    <div class="card">
-      <label for="diaryDate">📅 Дата</label>
+    <div class="card coral">
+      <div class="section-label"><span class="icon">📅</span> Щоденник</div>
+      <label for="diaryDate">Дата</label>
       <input type="date" id="diaryDate">
       <div id="diarySummary" style="display:none;">
-        <div class="row"><span>Ккал</span><span class="val" id="dTotalKkal">0</span></div>
-        <div class="row"><span>Білки</span><span class="val" id="dTotalProt">0</span></div>
-        <div class="row"><span>Жири</span><span class="val" id="dTotalFat">0</span></div>
-        <div class="row"><span>Вуглеводи</span><span class="val" id="dTotalCarbs">0</span></div>
-        <div class="row"><span>% від норми</span><span class="val" id="dPercent">0%</span></div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+          <span class="val" id="dTotalKkal">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+          <span class="val" id="dTotalProt">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+          <span class="val" id="dTotalFat">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+          <span class="val" id="dTotalCarbs">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon kkal">📊</span> % від норми</span>
+          <span class="val" id="dPercent">0%</span>
+        </div>
       </div>
       <div id="diaryItems"></div>
     </div>
 
-    <div class="card">
-      <label>🔍 Додати продукт</label>
+    <div class="card gold">
+      <div class="section-label"><span class="icon">➕</span> Додати продукт</div>
+      <label>Пошук</label>
       <div class="flex-row">
-        <input type="text" id="diarySearch" placeholder="Пошук продукту...">
+        <input type="text" id="diarySearch" placeholder="Назва продукту...">
         <input type="number" id="diaryWeight" placeholder="г" inputmode="decimal" style="width:80px;flex:none;">
       </div>
-      <div id="diarySuggest" style="max-height:120px;overflow-y:auto;"></div>
+      <div id="diarySuggest" style="max-height:140px;overflow-y:auto;"></div>
       <button class="btn-green" onclick="addDiaryEntry()" id="addDiaryBtn" disabled>➕ Додати</button>
     </div>
 
-    <div class="card" id="infocard" style="display:none;">
-      <h1 style="font-size:16px;margin-bottom:6px;font-family:'Playfair Display',serif;">📊 Інфографіка</h1>
+    <div class="card green" id="infocard" style="display:none;">
+      <div class="section-label"><span class="icon">📊</span> Інфографіка</div>
       <div id="ringChart" class="ring-wrap"></div>
-      <div id="weekChart" style="margin-top:6px;"></div>
+      <div id="weekChart" style="margin-top:10px;"></div>
     </div>
   </div>
 
@@ -651,22 +764,11 @@ async function handleLogin() {
   }
 }
 
-// enter key to login
-document.getElementById('loginPass').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleLogin();
-});
-document.getElementById('createPass').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleCreatePass();
-});
-document.getElementById('createPassConfirm').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleCreatePass();
-});
+document.getElementById('loginPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+document.getElementById('createPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
+document.getElementById('createPassConfirm').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
 document.getElementById('photoFileInput').addEventListener('change', handlePhotoFile);
-
-// ⏎ на diaryWeight теж додає
-document.getElementById('diaryWeight').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !document.getElementById('addDiaryBtn').disabled) addDiaryEntry();
-});
+document.getElementById('diaryWeight').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !document.getElementById('addDiaryBtn').disabled) addDiaryEntry(); });
 
 // ========== PROFILE ==========
 function showProfileScreen() {
@@ -737,13 +839,11 @@ function renderProfile() {
   var photo = document.getElementById('profilePhoto');
   if (_profile.photo) { photo.src = _profile.photo; photo.style.background = ''; }
   else if (_profile.photoUrl) { photo.src = _profile.photoUrl; photo.style.background = ''; }
-  else { photo.src = ''; photo.style.background = '#F3EDE4'; }
+  else { photo.src = ''; photo.style.background = 'linear-gradient(135deg, #F0E8DE, #E8DDD0)'; }
   document.getElementById('bmrResult').textContent = '';
 }
 
-function pickPhoto() {
-  document.getElementById('photoFileInput').click();
-}
+function pickPhoto() { document.getElementById('photoFileInput').click(); }
 
 function handlePhotoFile(e) {
   var file = e.target.files[0];
@@ -758,8 +858,7 @@ function handlePhotoFile(e) {
       if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
       else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
       canvas.width = w; canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       _profile.photo = canvas.toDataURL('image/jpeg', 0.7);
       _profile.photoUrl = '';
       renderProfile();
@@ -778,11 +877,7 @@ function setPhotoUrl() {
   renderProfile();
 }
 
-function removePhoto() {
-  _profile.photo = '';
-  _profile.photoUrl = '';
-  renderProfile();
-}
+function removePhoto() { _profile.photo = ''; _profile.photoUrl = ''; renderProfile(); }
 
 async function saveProfile() {
   if (!_key) { showToast('❌ Спочатку увійди'); return; }
@@ -863,17 +958,14 @@ async function doImport(jsonStr, pass) {
     var salt = fromB64(pkg.salt);
     var impKey = await deriveKey(pass, salt);
     var data = await decrypt(pkg.data, impKey);
-
     var wasLoggedIn = !!_key;
     if (!_key) {
       localStorage.setItem('foodlook_salt', toB64(salt));
       _key = impKey;
     }
-
     _profile = data.profile || { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
     _diary = data.diary || {};
     await saveLocal();
-
     if (!wasLoggedIn) {
       showToast('✅ Дані відновлено!');
       showProfileScreen();
@@ -888,14 +980,11 @@ async function doImport(jsonStr, pass) {
   }
 }
 
-// check backup weekly
 function checkBackup() {
   try {
     var last = localStorage.getItem('foodlook_backup');
     if (!last || Date.now() - parseInt(last) > 7 * 86400000) {
-      setTimeout(function() {
-        if (confirm('📦 Минуло >7 днів з бекапу. Створити зараз?')) showExport();
-      }, 5000);
+      setTimeout(function() { if (confirm('📦 Минуло >7 днів з бекапу. Створити зараз?')) showExport(); }, 5000);
     }
   } catch(e) {}
 }
@@ -908,13 +997,9 @@ function loadTodayDiary() {
   renderDiary(today);
 }
 
-document.getElementById('diaryDate').addEventListener('change', function() {
-  if (this.value) renderDiary(this.value);
-});
+document.getElementById('diaryDate').addEventListener('change', function() { if (this.value) renderDiary(this.value); });
 
-function getDiaryItems(date) {
-  return (_diary && _diary[date]) || [];
-}
+function getDiaryItems(date) { return (_diary && _diary[date]) || []; }
 
 function renderDiary(date) {
   var el = document.getElementById('diaryItems');
@@ -923,7 +1008,7 @@ function renderDiary(date) {
   var items = getDiaryItems(date);
   if (items.length === 0) {
     summary.style.display = 'none';
-    el.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:14px;padding:12px;font-style:italic;">Записів немає</div>';
+    el.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:15px;padding:24px;font-style:italic;">🍽️ Записів немає</div>';
     renderInfographics([]);
     return;
   }
@@ -946,7 +1031,6 @@ function renderDiary(date) {
   document.getElementById('dTotalCarbs').textContent = Math.round(tCarbs) + 'г';
   document.getElementById('dPercent').textContent = Math.round(tKkal / norm * 100) + '%';
   summary.style.display = 'block';
-
   renderInfographics(items);
 }
 
@@ -964,7 +1048,6 @@ document.getElementById('diarySearch').addEventListener('input', function() {
   var filtered = items.filter(function(p) { return p.name.toLowerCase().includes(q); }).slice(0, 10);
   filtered.forEach(function(p) {
     var d = document.createElement('div');
-    d.style.cssText = 'padding:8px 10px;cursor:pointer;border-bottom:1px solid #F3EDE4;font-size:14px;border-radius:8px;transition:background 0.15s;';
     d.textContent = p.name;
     d.onclick = function() {
       document.getElementById('diarySearch').value = p.name;
@@ -988,7 +1071,6 @@ async function addDiaryEntry() {
   var date = document.getElementById('diaryDate').value || new Date().toISOString().slice(0,10);
   var factor = w / 100;
   var entry = { name: p.name, weight: w, kkal: p.kkal * factor, prot: p.prot * factor, fat: p.fat * factor, carbs: p.carbs * factor };
-
   if (!_diary[date]) _diary[date] = [];
   _diary[date].push(entry);
   await saveLocal();
@@ -1013,35 +1095,32 @@ function renderInfographics(items) {
   var card = document.getElementById('infocard');
   if (!items || items.length === 0) { card.style.display = 'none'; return; }
   card.style.display = 'block';
-
   var tProt = 0, tFat = 0, tCarbs = 0;
   items.forEach(function(i) { tProt += i.prot; tFat += i.fat; tCarbs += i.carbs; });
   var total = tProt + tFat + tCarbs;
   var ring = document.getElementById('ringChart');
   if (total > 0) {
     ring.innerHTML = '';
-    ring.appendChild(makeRing(tProt / total * 100, '#2D7D5F', 'Білки'));
-    ring.appendChild(makeRing(tFat / total * 100, '#E8A849', 'Жири'));
-    ring.appendChild(makeRing(tCarbs / total * 100, '#E8735A', 'Вуглеводи'));
+    ring.appendChild(makeRing(tProt / total * 100, '#2D7D5F', '🥩 Білки'));
+    ring.appendChild(makeRing(tFat / total * 100, '#E8A849', '🧈 Жири'));
+    ring.appendChild(makeRing(tCarbs / total * 100, '#E8735A', '🍞 Вуглеводи'));
   }
   var weekEl = document.getElementById('weekChart');
-  if (_profile && _profile.kcalNorm) {
-    renderWeekChart(weekEl);
-  } else {
-    weekEl.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:13px;font-style:italic;">Встановіть норму ккал в профілі</div>';
-  }
+  if (_profile && _profile.kcalNorm) { renderWeekChart(weekEl); }
+  else { weekEl.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:13px;font-style:italic;padding:12px;">Встановіть норму ккал в профілі</div>'; }
 }
 
 function makeRing(pct, color, label) {
   var wrap = document.createElement('div');
   wrap.style.textAlign = 'center';
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('width', '90'); svg.setAttribute('height', '90'); svg.setAttribute('viewBox', '0 0 36 36');
+  svg.setAttribute('width', '96'); svg.setAttribute('height', '96'); svg.setAttribute('viewBox', '0 0 36 36');
   var r = 15.9, circ = 2 * Math.PI * r;
-    ['#F3EDE4', color].forEach(function(stroke, i) {
+  ['#F0E8DE', color].forEach(function(stroke, i) {
     var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', '18'); circle.setAttribute('cy', '18'); circle.setAttribute('r', '' + r);
-    circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', stroke); circle.setAttribute('stroke-width', '3');
+    circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', stroke); circle.setAttribute('stroke-width', '3.5');
+    circle.setAttribute('stroke-linecap', 'round');
     if (i === 1) {
       circle.setAttribute('stroke-dasharray', '' + circ);
       circle.setAttribute('stroke-dashoffset', '' + (circ - pct / 100 * circ));
@@ -1065,8 +1144,7 @@ function renderWeekChart(el) {
     var d = new Date(today); d.setDate(d.getDate() - i);
     dates.push(d.toISOString().slice(0,10));
   }
-
-  el.innerHTML = '<div style="font-size:14px;font-weight:600;margin-bottom:6px;text-align:center;font-family:Playfair Display,serif;color:#3D2B1F;">Останні 7 днів</div>';
+  el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:10px;text-align:center;font-family:Playfair Display,serif;color:#3D2B1F;">Останні 7 днів</div>';
   var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
   dates.forEach(function(d) {
     var items = getDiaryItems(d);
@@ -1075,9 +1153,9 @@ function renderWeekChart(el) {
     var pct = Math.min(100, kkal / norm * 100);
     var row = document.createElement('div');
     row.className = 'chart-row';
-    var color = pct > 100 ? '#D4564E' : (pct > 80 ? '#2D7D5F' : '#E8A849');
-    row.innerHTML = '<span style="min-width:40px;">' + dayNames[new Date(d).getDay()] + '</span>' +
-      '<div class="bar" style="width:' + Math.max(2, pct) + '%;background:' + color + ';"></div>' +
+    var color = pct > 100 ? '#E06050' : (pct > 80 ? '#2D7D5F' : '#E8A849');
+    row.innerHTML = '<span style="min-width:36px;font-weight:600;">' + dayNames[new Date(d).getDay()] + '</span>' +
+      '<div class="bar" style="width:' + Math.max(3, pct) + '%;background:' + color + ';"></div>' +
       '<span class="bar-label">' + Math.round(kkal) + '</span>';
     el.appendChild(row);
   });
@@ -1090,14 +1168,11 @@ function switchTab(tab) {
   ['Calc','Profile','Diary'].forEach(function(t) {
     document.getElementById('tab' + t).style.display = t.toLowerCase() === tab ? 'block' : 'none';
   });
-  if (tab === 'profile') {
-    if (_key) { showProfileScreen(); }
-    else { showPasswordScreen(); }
-  }
+  if (tab === 'profile') { if (_key) showProfileScreen(); else showPasswordScreen(); }
   if (tab === 'diary' && _key) loadTodayDiary();
 }
 
-// ========== EXISTING CALCULATOR ==========
+// ========== CALCULATOR ==========
 let html5QrCode = null, scannerRunning = false, items = [], currentItem = null;
 
 const foodP = fetch(FOOD_TSV).then(r => r.text()).catch(() => '');
@@ -1133,23 +1208,17 @@ Promise.all([foodP, dishP]).then(([foodText, dishText]) => {
   if (items.length === 0) showToast('❌ База порожня', 4000);
   checkBackup();
 }).catch(err => {
-  document.getElementById('loadingMsg').textContent = '❌ Помилка: ' + err.message;
+  document.getElementById('loadingMsg').innerHTML = '❌ Помилка: ' + err.message;
 });
 
-// SEARCH
 const searchInput = document.getElementById('searchInput');
 const productSelect = document.getElementById('productSelect');
 const productList = document.getElementById('productList');
 const notFoundMsg = document.getElementById('notFoundMsg');
 let searchTimeout;
 
-searchInput.addEventListener('input', () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(doSearch, 200);
-});
-searchInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
-});
+searchInput.addEventListener('input', () => { clearTimeout(searchTimeout); searchTimeout = setTimeout(doSearch, 200); });
+searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
 
 function doSearch() {
   const q = searchInput.value.toLowerCase().trim();
@@ -1187,7 +1256,6 @@ function selectItem(p) {
   barcodeInput.value = p.code || ''; updateResult();
 }
 
-// BARCODE
 const barcodeInput = document.getElementById('barcodeInput');
 barcodeInput.addEventListener('input', () => { lookupBarcode(barcodeInput.value.trim()); });
 barcodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(barcodeInput.value.trim()); } });
@@ -1204,7 +1272,6 @@ function lookupBarcode(code) {
   }
 }
 
-// SCANNER
 function toggleScanner() {
   if (scannerRunning) { stopScanner(); return; }
   document.getElementById('scanner').style.display = 'block';
@@ -1217,7 +1284,6 @@ function stopScanner() {
 }
 function onScanSuccess(decodedText) { stopScanner(); barcodeInput.value = decodedText; lookupBarcode(decodedText); }
 
-// WEIGHT
 const weightInput = document.getElementById('weightInput');
 weightInput.addEventListener('input', updateResult);
 function updateResult() {
@@ -1231,8 +1297,8 @@ function updateResult() {
   document.getElementById('resFat').textContent = Math.round(currentItem.fat * factor * 10) / 10;
   document.getElementById('resCarbs').textContent = Math.round(currentItem.carbs * factor * 10) / 10;
   const badge = document.getElementById('codeBadge');
-  if (currentItem.code) { badge.textContent = '📦 ' + currentItem.code; badge.style.display = 'inline-block'; }
-  else if (currentItem.type === 'dish') { badge.textContent = '🍲 Страва'; badge.style.display = 'inline-block'; }
+  if (currentItem.code) { badge.textContent = '📦 ' + currentItem.code; badge.style.display = 'inline-flex'; }
+  else if (currentItem.type === 'dish') { badge.textContent = '🍲 Страва'; badge.style.display = 'inline-flex'; }
   else { badge.style.display = 'none'; }
   document.getElementById('resultCard').style.display = 'block';
 }
