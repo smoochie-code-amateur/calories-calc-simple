@@ -1,7 +1,7 @@
 // ========== CONFIG ==========
+var FOOD_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=0&single=true&output=tsv';
+var DISH_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=303617623&single=true&output=tsv';
 var CLOUD_URL = 'https://calories-calc.nitanaredleaf.workers.dev';
-var FOOD_TSV = CLOUD_URL + '/data?type=food';
-var DISH_TSV = CLOUD_URL + '/data?type=dishes';
 var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwvQV7U8dBareulZcDAQNkysAxhK4z8cmnWpF3WZvFxuPv5VcNh7X172FjrMlejx6FH5Q/exec';
 
 // ========== CRYPTO ==========
@@ -965,11 +965,23 @@ function initCalculator() {
 
   window.toggleScanner = function() {
     if (scannerRunning) { stopScanner(); return; }
+    if (!window.Html5Qrcode) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+      s.onload = function() { startScanner(); };
+      s.onerror = function() { showToast('Не вдалося завантажити сканер'); };
+      document.head.appendChild(s);
+    } else {
+      startScanner();
+    }
+  };
+
+  function startScanner() {
     document.getElementById('scanner').style.display = 'block';
     if (!html5QrCode) html5QrCode = new Html5Qrcode("scanner");
     html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, onScanSuccess)
       .then(function() { scannerRunning = true; }).catch(function(err) { showToast('Камера: ' + err); });
-  };
+  }
 
   function stopScanner() {
     if (html5QrCode) html5QrCode.stop().then(function() { scannerRunning = false; document.getElementById('scanner').style.display = 'none'; });
