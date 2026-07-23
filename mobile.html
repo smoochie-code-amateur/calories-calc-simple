@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FoodLook — Калькулятор Калорій</title>
+  <link rel="icon" href="assets/flame.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+</head>
+<body>
+
+  <div id="loadingMsg" class="loading">
+    <div class="spinner"></div>
+    <div>Завантаження бази продуктів...</div>
+  </div>
+
+  <div id="content" style="display:none;">
+
+    <div class="app-header">
+      <div class="logo-row">
+        <img src="assets/logo.svg" alt="FoodLook" width="36" height="36">
+        <h1>FoodLook</h1>
+      </div>
+      <div class="subtitle">Калькулятор калорій</div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Дашборд</button>
+      <button data-tab="calc" onclick="switchTab('calc')">🧮 Калькулятор</button>
+      <button data-tab="profile" onclick="switchTab('profile')">👤 Профіль</button>
+      <button data-tab="diary" onclick="switchTab('diary')">📓 Щоденник</button>
+      <button data-tab="settings" onclick="switchTab('settings')">⚙️</button>
+    </div>
+
+    <!-- TAB: Dashboard -->
+    <div id="tabDashboard" class="tab-content active">
+      <div class="card">
+        <div class="section-label"><span class="icon blue">📊</span> Дашборд</div>
+        <div id="dashContent">
+          <div class="empty-state">📊 Заповніть профіль (вага, зріст, вік), щоб побачити дашборд.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Calculator -->
+    <div id="tabCalc" class="tab-content">
+      <div class="card">
+        <div class="section-label"><span class="icon red">🔍</span> Пошук продукту</div>
+        <label for="searchInput">Назва продукту</label>
+        <input type="text" id="searchInput" placeholder="Почни вводити назву..." autocomplete="off">
+        <div id="productList" style="display:none;">
+          <select id="productSelect" size="5"></select>
+        </div>
+        <div id="notFoundMsg" class="not-found" style="display:none;"></div>
+
+        <label for="barcodeInput">Штрихкод</label>
+        <div class="flex-row">
+          <input type="text" id="barcodeInput" placeholder="Введи або відскануй...">
+          <button class="btn-outline btn-icon" onclick="toggleScanner()"><img src="assets/camera.svg" width="20" height="20" alt=""></button>
+        </div>
+        <div id="scanner"></div>
+
+        <label for="weightInput">⚖️ Вага (г)</label>
+        <input type="number" id="weightInput" placeholder="0" inputmode="decimal">
+      </div>
+
+      <div class="card" id="resultCard" style="display:none;">
+        <div class="product-name" id="productName"></div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+          <span class="val" id="resKkal">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+          <span class="val" id="resProt">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+          <span class="val" id="resFat">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+          <span class="val" id="resCarbs">0</span>
+        </div>
+        <div id="codeBadge" class="badge" style="display:none;"></div>
+      </div>
+
+      <button class="btn-orange" onclick="window.open(WEB_APP_URL, '_blank')">
+        ➕ Додати продукт чи рецепт
+      </button>
+
+      <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px;">
+        База даних продуктів створена у Google Sheets.
+      </p>
+    </div>
+
+    <!-- TAB: Profile -->
+    <div id="tabProfile" class="tab-content">
+      <div id="createPassScreen" style="display:none;">
+        <div class="card">
+          <div class="section-label"><span class="icon red">🔐</span> Створення профілю</div>
+          <label>Нікнейм</label>
+          <input type="text" id="createNick" placeholder="Ваш нік" autocomplete="off">
+          <label>Придумайте пароль</label>
+          <input type="password" id="createPass" placeholder="Пароль">
+          <label>Повторіть пароль</label>
+          <input type="password" id="createPassConfirm" placeholder="Повторіть пароль">
+          <button class="btn-primary" onclick="handleCreatePass()">🔐 Створити профіль</button>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.7;">
+            ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері та синхронізуються у хмару.
+            Пароль не зберігається — він використовується для шифрування.
+            Якщо забудете пароль, дані буде неможливо відновити.
+          </p>
+          <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Відновити з бекапу</button>
+          <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Очистити всі дані</button>
+        </div>
+      </div>
+
+      <div id="loginScreen" style="display:none;">
+        <div class="card">
+          <div class="section-label"><span class="icon red">🔐</span> Вхід в профіль</div>
+          <label>Нікнейм</label>
+          <input type="text" id="loginNick" placeholder="Ваш нік" autocomplete="off">
+          <label>Ваш пароль</label>
+          <input type="password" id="loginPass" placeholder="Пароль">
+          <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
+          <p style="font-size:13px;color:var(--text-muted);margin-top:12px;">
+            ⚠️ Дані синхронізуються між пристроями. Забули пароль? Натисніть "Очистити".
+          </p>
+          <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Очистити всі дані</button>
+        </div>
+      </div>
+
+      <div id="profileScreen" style="display:none;">
+        <div class="card">
+          <img id="profilePhoto" class="profile-photo" src="" alt="Фото">
+          <div class="flex-row" style="justify-content:center;margin-bottom:16px;">
+            <button class="btn-outline" onclick="pickPhoto()" style="font-size:13px;width:auto;padding:8px 16px;">📷 Фото</button>
+            <button class="btn-outline" onclick="setPhotoUrl()" style="font-size:13px;width:auto;padding:8px 16px;">🔗 URL</button>
+            <button class="btn-outline" onclick="removePhoto()" style="font-size:13px;width:auto;padding:8px 16px;color:var(--danger);">🗑</button>
+          </div>
+          <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
+          <div class="profile-stats">
+            <div><span class="num" id="pWeight">—</span><span class="lbl">Вага (кг)</span></div>
+            <div><span class="num" id="pHeight">—</span><span class="lbl">Зріст (см)</span></div>
+            <div><span class="num" id="pAge">—</span><span class="lbl">Вік</span></div>
+            <div><span class="num" id="pNorm">—</span><span class="lbl">Норма ккал</span></div>
+          </div>
+          <div class="form-grid">
+            <div><label>Ім'я</label><input type="text" id="editName"></div>
+            <div><label>Вік</label><input type="number" id="editAge" min="1" max="150"></div>
+            <div><label>Стать</label>
+              <select id="editGender">
+                <option value="male">Чоловіча</option>
+                <option value="female">Жіноча</option>
+              </select>
+            </div>
+            <div><label>Вага (кг)</label><input type="number" id="editWeight" step="0.1"></div>
+            <div><label>Зріст (см)</label><input type="number" id="editHeight" step="1"></div>
+            <div><label>Норма ккал</label><input type="number" id="editNorm" step="1"></div>
+            <div class="full">
+              <label>📊 Розрахунок норми</label>
+              <div class="flex-row" style="gap:6px;">
+                <button class="btn-outline" onclick="calcBMR()" style="font-size:13px;width:auto;flex:1;padding:12px;">🧮 Розрахувати BMR</button>
+                <select id="editDeficit" style="width:auto;flex:1;margin-bottom:0;">
+                  <option value="-20">-20% (сильний дефіцит)</option>
+                  <option value="-15">-15%</option>
+                  <option value="-10">-10% (помірний дефіцит)</option>
+                  <option value="-5">-5%</option>
+                  <option value="0" selected>0% (підтримка)</option>
+                  <option value="5">+5%</option>
+                  <option value="10">+10% (набір маси)</option>
+                  <option value="15">+15%</option>
+                  <option value="20">+20% (сильний набір)</option>
+                </select>
+              </div>
+              <div id="bmrResult" style="font-size:13px;color:var(--text-muted);margin-top:8px;"></div>
+            </div>
+          </div>
+          <button class="btn-green" onclick="saveProfile()">💾 Зберегти профіль</button>
+          <button class="btn-outline" onclick="showExport()" style="font-size:13px;">📦 Експорт даних</button>
+          <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Імпорт даних</button>
+          <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Вийти та очистити дані</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Diary -->
+    <div id="tabDiary" class="tab-content">
+      <div class="card">
+        <div class="section-label"><span class="icon red">📅</span> Щоденник</div>
+        <label for="diaryDate">Дата</label>
+        <input type="date" id="diaryDate">
+        <div id="diarySummary" style="display:none;">
+          <div class="row">
+            <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+            <span class="val" id="dTotalKkal">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+            <span class="val" id="dTotalProt">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+            <span class="val" id="dTotalFat">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+            <span class="val" id="dTotalCarbs">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon kkal">📊</span> % від норми</span>
+            <span class="val" id="dPercent">0%</span>
+          </div>
+        </div>
+        <div id="diaryItems"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-label"><span class="icon orange">➕</span> Додати продукт</div>
+        <label>Пошук</label>
+        <div class="flex-row">
+          <input type="text" id="diarySearch" placeholder="Назва продукту...">
+          <input type="number" id="diaryWeight" placeholder="г" inputmode="decimal" style="width:80px;flex:none;">
+        </div>
+        <div id="diarySuggest" style="max-height:140px;overflow-y:auto;"></div>
+        <button class="btn-green" onclick="addDiaryEntry()" id="addDiaryBtn" disabled>➕ Додати</button>
+      </div>
+
+      <div class="card" id="infocard" style="display:none;">
+        <div class="section-label"><span class="icon green">📊</span> Інфографіка</div>
+        <div id="ringChart" class="ring-wrap"></div>
+        <div id="weekChart" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Settings -->
+    <div id="tabSettings" class="tab-content">
+      <div class="card">
+        <div class="section-label"><span class="icon red">☁️</span> Синхронізація</div>
+        <div id="cloudStatus" style="text-align:center;padding:12px 0;font-size:14px;color:var(--text-muted);">
+          ○ Офлайн
+        </div>
+        <div id="cloudActions" style="display:none;">
+          <button class="btn-outline" onclick="syncToCloud()" style="font-size:13px;">🔄 Синхронізувати зараз</button>
+          <button class="btn-outline" onclick="cloudLogout()" style="font-size:13px;color:var(--danger);">🚪 Вийти з хмари</button>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:14px;line-height:1.6;">
+          ☁️ Дані шифруються вашим паролем на пристрої.
+          Сервер зберігає лише зашифровані блоби — ваш пароль ніколи не покидає браузер.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
