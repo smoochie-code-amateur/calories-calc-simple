@@ -108,6 +108,7 @@ a:hover {
 
 /* ========== INPUTS ========== */
 label {
+  font-family: var(--font-heading);
   font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
@@ -407,7 +408,7 @@ button {
   height: 40px;
   border: 3px solid var(--row-divider);
   border-top-color: var(--primary);
-  border-radius: 0;
+  border-radius: 50% !important;
   animation: spin 0.8s linear infinite;
   margin-bottom: 14px;
 }
