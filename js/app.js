@@ -405,9 +405,9 @@ function renderProfile() {
   el = document.getElementById('editDeficit'); if (el) el.value = _profile.deficit || 0;
   var photo = document.getElementById('profilePhoto');
   if (photo) {
-    if (_profile.photo) { photo.src = _profile.photo; photo.style.background = ''; }
-    else if (_profile.photoUrl) { photo.src = _profile.photoUrl; photo.style.background = ''; }
-    else { photo.src = ''; photo.style.background = 'linear-gradient(135deg, #F0E8DE, #E8DDD0)'; }
+    if (_profile.photo) { photo.src = _profile.photo; }
+    else if (_profile.photoUrl) { photo.src = _profile.photoUrl; }
+    else { photo.src = ''; }
   }
   el = document.getElementById('bmrResult'); if (el) el.textContent = '';
 }
