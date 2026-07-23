@@ -1,1570 +1,319 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Калькулятор Калорій</title>
-  <link rel="icon" href="food.png" type="image/png">
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap');
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #FEF7EE;
-      padding: 0 20px 32px;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      color: #3D2B1F;
-    }
-
-    .app-header {
-      text-align: center;
-      padding: 36px 0 28px;
-      position: relative;
-    }
-    .app-header::before {
-      content: '';
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #F4A261, #E8735A);
-      border-radius: 50%;
-      opacity: 0.1;
-      filter: blur(40px);
-    }
-    .app-emoji {
-      font-size: 48px;
-      display: block;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
-    }
-    .app-header h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 30px;
-      font-weight: 700;
-      color: #3D2B1F;
-      margin-bottom: 6px;
-      letter-spacing: -0.5px;
-      position: relative;
-    }
-    .app-header .subtitle {
-      font-size: 14px;
-      color: #A08B74;
-      font-style: italic;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 22px;
-      padding: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 24px rgba(61, 43, 31, 0.05), 0 1px 4px rgba(61, 43, 31, 0.03);
-      border: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 70px;
-      height: 70px;
-      border-radius: 0 22px 0 70px;
-      opacity: 0.04;
-    }
-    .card.coral::after { background: #E8735A; }
-    .card.green::after { background: #2D7D5F; }
-    .card.gold::after { background: #D4952E; }
-
-    label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #A08B74;
-      display: block;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 14px 16px;
-      font-size: 16px;
-      font-family: 'DM Sans', sans-serif;
-      border: 2px solid #F0E8DE;
-      border-radius: 14px;
-      outline: none;
-      background: #FDF9F4;
-      margin-bottom: 18px;
-      color: #3D2B1F;
-      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
-      -webkit-appearance: none;
-    }
-    input:focus, select:focus {
-      border-color: #E8735A;
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(232, 115, 90, 0.1);
-    }
-    input::placeholder { color: #C8B8A4; }
-
-    button {
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 700;
-      font-family: 'DM Sans', sans-serif;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      letter-spacing: 0.3px;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #E8735A 0%, #D4613F 100%);
-      color: #fff;
-      box-shadow: 0 6px 24px rgba(232, 115, 90, 0.35);
-    }
-    .btn-primary:hover { box-shadow: 0 8px 32px rgba(232, 115, 90, 0.45); transform: translateY(-2px); }
-    .btn-primary:active { transform: translateY(0); }
-
-    .btn-green {
-      background: linear-gradient(135deg, #3D9B6F 0%, #2D7D5F 100%);
-      color: #fff;
-      box-shadow: 0 6px 24px rgba(61, 155, 111, 0.3);
-    }
-    .btn-green:hover { box-shadow: 0 8px 32px rgba(61, 155, 111, 0.4); transform: translateY(-2px); }
-    .btn-green:active { transform: translateY(0); }
-
-    .btn-orange {
-      background: linear-gradient(135deg, #F4A261 0%, #E8943A 100%);
-      color: #fff;
-      box-shadow: 0 6px 24px rgba(244, 162, 97, 0.3);
-    }
-    .btn-orange:hover { box-shadow: 0 8px 32px rgba(244, 162, 97, 0.4); transform: translateY(-2px); }
-    .btn-orange:active { transform: translateY(0); }
-
-    .btn-red {
-      background: linear-gradient(135deg, #E06050 0%, #C84838 100%);
-      color: #fff;
-      box-shadow: 0 6px 24px rgba(224, 96, 80, 0.3);
-    }
-    .btn-red:hover { transform: translateY(-2px); }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #F0E8DE;
-      color: #6B5744;
-    }
-    .btn-outline:hover { background: #FDF9F4; border-color: #E0D4C4; }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 0;
-      border-bottom: 1px solid #F5EDE4;
-      font-size: 16px;
-    }
-    .row:last-child { border-bottom: none; }
-
-    .row-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .row-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    .row-icon.kkal { background: #FEF0E8; }
-    .row-icon.prot { background: #E8F5EE; }
-    .row-icon.fat { background: #FFF3E0; }
-    .row-icon.carbs { background: #FFF0E8; }
-
-    .val {
-      font-weight: 700;
-      font-size: 18px;
-      color: #E8735A;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #FDF0E6, #FAE4D4);
-      color: #C0603A;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-top: 10px;
-    }
-
-    .flex-row { display: flex; gap: 10px; align-items: center; }
-    .flex-row input { flex: 1; margin-bottom: 0; min-width: 0; }
-    .flex-row button {
-      width: 52px;
-      padding: 14px 0;
-      margin-bottom: 0;
-      font-size: 20px;
-      border-radius: 14px;
-    }
-
-    #productSelect { max-height: 160px; border-radius: 14px; }
-
-    #scanner {
-      width: 100%; max-width: 100%; margin: 14px 0; display: none;
-      overflow: hidden; border-radius: 14px;
-    }
-    #scanner video { width: 100% !important; max-width: 100% !important; height: auto !important; }
-
-    .toast {
-      position: fixed;
-      bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: #3D2B1F;
-      color: #FDF5EC;
-      padding: 14px 28px;
-      border-radius: 16px;
-      font-size: 15px; font-weight: 600;
-      opacity: 0;
-      transition: opacity 0.35s, transform 0.35s;
-      pointer-events: none; z-index: 999;
-      text-align: center; max-width: 90%;
-      box-shadow: 0 8px 32px rgba(61, 43, 31, 0.25);
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    .not-found { text-align: center; color: #BBA98E; font-size: 14px; padding: 10px; line-height: 1.5; }
-
-    .loading {
-      text-align: center; color: #A08B74; font-size: 16px;
-      padding: 60px 20px; font-family: 'Playfair Display', serif;
-    }
-    .loading .spinner {
-      display: inline-block;
-      width: 40px; height: 40px;
-      border: 3px solid #F0E8DE;
-      border-top-color: #E8735A;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 14px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .tab-bar {
-      display: flex;
-      margin-bottom: 20px;
-      background: rgba(240, 232, 222, 0.5);
-      border-radius: 16px;
-      padding: 5px;
-      gap: 0;
-    }
-    .tab-bar button {
-      flex: 1;
-      padding: 13px 10px;
-      font-size: 13px;
-      font-weight: 600;
-      background: transparent;
-      color: #A08B74;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      margin-bottom: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-    .tab-bar button.active {
-      background: #fff;
-      color: #E8735A;
-      box-shadow: 0 3px 12px rgba(61, 43, 31, 0.08);
-      font-weight: 700;
-    }
-    .tab-bar button:hover:not(.active) { color: #6B5744; background: rgba(255,255,255,0.4); }
-
-    .profile-photo {
-      width: 96px; height: 96px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 16px;
-      display: block;
-      background: linear-gradient(135deg, #F0E8DE, #E8DDD0);
-      border: 4px solid #fff;
-      box-shadow: 0 4px 20px rgba(61, 43, 31, 0.1);
-    }
-
-    .profile-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .profile-stats div {
-      background: #FDF9F4;
-      padding: 14px 8px;
-      border-radius: 14px;
-      border: 1px solid #F0E8DE;
-    }
-    .profile-stats .num {
-      font-size: 22px;
-      font-weight: 700;
-      color: #E8735A;
-      display: block;
-      font-family: 'Playfair Display', serif;
-    }
-    .profile-stats .lbl {
-      font-size: 11px;
-      color: #A08B74;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-      display: block;
-    }
-
-    .diary-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #F5EDE4;
-      font-size: 15px;
-      align-items: center;
-    }
-    .diary-item .diary-name { flex: 1; color: #5A4636; padding-right: 12px; }
-    .diary-item .diary-kkal {
-      font-weight: 700;
-      color: #E8735A;
-      min-width: 60px;
-      text-align: right;
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-    }
-    .diary-item .diary-del {
-      color: #D4564E;
-      cursor: pointer;
-      padding: 4px 8px;
-      font-size: 14px;
-      opacity: 0.5;
-      transition: opacity 0.2s;
-      border-radius: 8px;
-    }
-    .diary-item .diary-del:hover { opacity: 1; background: #FEF0E8; }
-
-    .chart-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .chart-row .bar {
-      height: 14px;
-      border-radius: 7px;
-      min-width: 3px;
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .chart-row .bar-label { min-width: 44px; text-align: right; color: #A08B74; }
-
-    .ring-wrap {
-      display: flex;
-      justify-content: center;
-      gap: 28px;
-      margin: 16px 0;
-      flex-wrap: wrap;
-    }
-    .ring-label {
-      text-align: center;
-      font-size: 12px;
-      color: #A08B74;
-      margin-top: 6px;
-      font-weight: 600;
-    }
-
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-grid .full { grid-column: 1 / -1; }
-
-    #diarySuggest > div {
-      padding: 10px 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #F5EDE4;
-      font-size: 15px;
-      border-radius: 10px;
-      transition: background 0.2s;
-    }
-    #diarySuggest > div:last-child { border-bottom: none; }
-    #diarySuggest > div:hover { background: #FDF9F4; }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #E0D4C4; border-radius: 3px; }
-    ::selection { background: #E8735A; color: #fff; }
-
-    .section-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 18px;
-      font-weight: 700;
-      font-family: 'Playfair Display', serif;
-      color: #3D2B1F;
-      margin-bottom: 16px;
-    }
-    .section-label .icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      font-size: 20px;
-      background: linear-gradient(135deg, #FEF0E8, #FDF0E6);
-    }
-
-    .product-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #3D2B1F;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #F5EDE4;
-    }
-
-    @media (max-width: 400px) {
-      body { padding: 0 14px 24px; }
-      .card { padding: 18px; }
-      input, select { font-size: 15px; padding: 12px; margin-bottom: 14px; }
-      button { padding: 14px; font-size: 15px; }
-      .flex-row button { width: 48px; padding: 12px 0; font-size: 18px; }
-      .app-header h1 { font-size: 26px; }
-      .row { font-size: 15px; padding: 12px 0; }
-      .tab-bar button { font-size: 12px; padding: 11px 6px; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodLook — Калькулятор Калорій</title>
+  <link rel="icon" href="assets/flame.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/desktop.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
 </head>
 <body>
 
-<div id="loadingMsg" class="loading">
-  <div class="spinner"></div>
-  <div>Завантаження бази продуктів...</div>
-</div>
-
-<div id="content" style="display:none;">
-
-  <div class="app-header">
-    <span class="app-emoji">🍽️</span>
-    <h1>FoodLook</h1>
-    <div class="subtitle">Калькулятор калорій</div>
-  </div>
-
-  <div class="tab-bar">
-    <button class="active" data-tab="calc" onclick="switchTab('calc')">🥗 Калькулятор</button>
-    <button data-tab="profile" onclick="switchTab('profile')">👤 Профіль</button>
-    <button data-tab="diary" onclick="switchTab('diary')">📓 Щоденник</button>
-    <button data-tab="settings" onclick="switchTab('settings')">⚙️ Налаштування</button>
-  </div>
-
-  <!-- TAB: Calculator -->
-  <div id="tabCalc">
-    <div class="card coral">
-      <div class="section-label"><span class="icon">🔍</span> Пошук продукту</div>
-      <label for="searchInput">Назва продукту</label>
-      <input type="text" id="searchInput" placeholder="Почни вводити назву..." autocomplete="off">
-      <div id="productList" style="display:none;">
-        <select id="productSelect" size="5"></select>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="assets/logo.svg" alt="FoodLook">
+        <h1>FoodLook</h1>
       </div>
-      <div id="notFoundMsg" class="not-found" style="display:none;"></div>
-
-      <label for="barcodeInput">Штрихкод</label>
-      <div class="flex-row">
-        <input type="text" id="barcodeInput" placeholder="Введи або відскануй...">
-        <button class="btn-outline" onclick="toggleScanner()">📷</button>
-      </div>
-      <div id="scanner"></div>
-
-      <label for="weightInput">⚖️ Вага (г)</label>
-      <input type="number" id="weightInput" placeholder="0" inputmode="decimal">
+      <div class="sidebar-subtitle">Калькулятор калорій</div>
     </div>
 
-    <div class="card green" id="resultCard" style="display:none;">
-      <div class="product-name" id="productName"></div>
-      <div class="row">
-        <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
-        <span class="val" id="resKkal">0</span>
-      </div>
-      <div class="row">
-        <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
-        <span class="val" id="resProt">0</span>
-      </div>
-      <div class="row">
-        <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
-        <span class="val" id="resFat">0</span>
-      </div>
-      <div class="row">
-        <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
-        <span class="val" id="resCarbs">0</span>
-      </div>
-      <div id="codeBadge" class="badge" style="display:none;"></div>
+    <nav class="sidebar-nav">
+      <a data-tab="dashboard" class="active" onclick="switchTab('dashboard')">
+        <span class="nav-icon"><img src="assets/chart.svg" width="20" height="20" alt=""></span>
+        Дашборд
+      </a>
+      <a data-tab="calc" onclick="switchTab('calc')">
+        <span class="nav-icon"><img src="assets/calculator-fill.svg" width="20" height="20" alt=""></span>
+        Калькулятор
+      </a>
+      <a data-tab="profile" onclick="switchTab('profile')">
+        <span class="nav-icon"><img src="assets/user-fill.svg" width="20" height="20" alt=""></span>
+        Профіль
+      </a>
+      <a data-tab="diary" onclick="switchTab('diary')">
+        <span class="nav-icon"><img src="assets/book-fill.svg" width="20" height="20" alt=""></span>
+        Щоденник
+      </a>
+      <a data-tab="settings" onclick="switchTab('settings')">
+        <span class="nav-icon"><img src="assets/settings.svg" width="20" height="20" alt=""></span>
+        Налаштування
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      FoodLook v2.0<br>
+      <a href="mobile.html">📱 Мобільна версія</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- Loading -->
+    <div id="loadingMsg" class="loading">
+      <div class="spinner"></div>
+      <div>Завантаження бази продуктів...</div>
     </div>
 
-    <button class="btn-orange" onclick="window.open(WEB_APP_URL, '_blank')">
-      ➕ Додати продукт чи рецепт
-    </button>
+    <div id="content" style="display:none;">
 
-    <p style="text-align:center;font-size:12px;color:#BBA98E;margin-top:16px;">
-      База даних продуктів створена у Google Sheets.
-    </p>
-  </div>
-
-  <!-- TAB: Profile -->
-  <div id="tabProfile" style="display:none;">
-    <div id="createPassScreen" class="card coral" style="display:none;">
-      <div class="section-label"><span class="icon">🔐</span> Створення профілю</div>
-      <label>Нікнейм</label>
-      <input type="text" id="createNick" placeholder="Ваш нік" autocomplete="off">
-      <label>Придумайте пароль</label>
-      <input type="password" id="createPass" placeholder="Пароль">
-      <label>Повторіть пароль</label>
-      <input type="password" id="createPassConfirm" placeholder="Повторіть пароль">
-      <button class="btn-primary" onclick="handleCreatePass()">🔐 Створити профіль</button>
-      <p style="font-size:13px;color:#A08B74;margin-top:14px;line-height:1.7;">
-        ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері та синхронізуються у хмару.
-        Пароль не зберігається — він використовується для шифрування.
-        Якщо забудете пароль, дані буде неможливо відновити.
-      </p>
-      <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Відновити з бекапу</button>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
-    </div>
-
-    <div id="loginScreen" class="card coral" style="display:none;">
-      <div class="section-label"><span class="icon">🔐</span> Вхід в профіль</div>
-      <label>Нікнейм</label>
-      <input type="text" id="loginNick" placeholder="Ваш нік" autocomplete="off">
-      <label>Ваш пароль</label>
-      <input type="password" id="loginPass" placeholder="Пароль">
-      <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
-      <p style="font-size:13px;color:#A08B74;margin-top:12px;">
-        ⚠️ Дані синхронізуються між пристроями. Забули пароль? Натисніть "Очистити".
-      </p>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
-    </div>
-
-    <div id="profileScreen" class="card green" style="display:none;">
-      <img id="profilePhoto" class="profile-photo" src="" alt="Фото">
-      <div class="flex-row" style="justify-content:center;margin-bottom:16px;">
-        <button class="btn-outline" onclick="pickPhoto()" style="font-size:13px;width:auto;padding:8px 16px;">📷 Фото</button>
-        <button class="btn-outline" onclick="setPhotoUrl()" style="font-size:13px;width:auto;padding:8px 16px;">🔗 URL</button>
-        <button class="btn-outline" onclick="removePhoto()" style="font-size:13px;width:auto;padding:8px 16px;color:#E06050;">🗑</button>
-      </div>
-      <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
-      <div class="profile-stats">
-        <div><span class="num" id="pWeight">—</span><span class="lbl">Вага (кг)</span></div>
-        <div><span class="num" id="pHeight">—</span><span class="lbl">Зріст (см)</span></div>
-        <div><span class="num" id="pAge">—</span><span class="lbl">Вік</span></div>
-        <div><span class="num" id="pNorm">—</span><span class="lbl">Норма ккал</span></div>
-      </div>
-      <div class="form-grid">
-        <div><label>Ім'я</label><input type="text" id="editName"></div>
-        <div><label>Вік</label><input type="number" id="editAge" min="1" max="150"></div>
-        <div><label>Стать</label>
-          <select id="editGender">
-            <option value="male">Чоловіча</option>
-            <option value="female">Жіноча</option>
-          </select>
+      <!-- TAB: Dashboard -->
+      <div id="tabDashboard" class="tab-content active">
+        <div class="page-header">
+          <h2>📊 Дашборд</h2>
+          <div class="subtitle">Статистика за сьогодні</div>
         </div>
-        <div><label>Вага (кг)</label><input type="number" id="editWeight" step="0.1"></div>
-        <div><label>Зріст (см)</label><input type="number" id="editHeight" step="1"></div>
-        <div><label>Норма ккал</label><input type="number" id="editNorm" step="1"></div>
-        <div class="full">
-          <label>📊 Розрахунок норми</label>
-          <div class="flex-row" style="gap:6px;">
-            <button class="btn-outline" onclick="calcBMR()" style="font-size:13px;width:auto;flex:1;padding:12px;">🧮 Розрахувати BMR</button>
-            <select id="editDeficit" style="width:auto;flex:1;margin-bottom:0;">
-              <option value="-20">-20% (сильний дефіцит)</option>
-              <option value="-15">-15%</option>
-              <option value="-10">-10% (помірний дефіцит)</option>
-              <option value="-5">-5%</option>
-              <option value="0" selected>0% (підтримка)</option>
-              <option value="5">+5%</option>
-              <option value="10">+10% (набір маси)</option>
-              <option value="15">+15%</option>
-              <option value="20">+20% (сильний набір)</option>
-            </select>
+        <div id="dashContent">
+          <div class="empty-state">📊 Заповніть профіль (вага, зріст, вік), щоб побачити дашборд.</div>
+        </div>
+      </div>
+
+      <!-- TAB: Calculator -->
+      <div id="tabCalc" class="tab-content">
+        <div class="page-header">
+          <h2>🧮 Калькулятор</h2>
+          <div class="subtitle">Пошук продуктів та розрахунок калорій</div>
+        </div>
+
+        <div class="card">
+          <div class="section-label"><span class="icon red">🔍</span> Пошук продукту</div>
+          <label for="searchInput">Назва продукту</label>
+          <input type="text" id="searchInput" placeholder="Почни вводити назву..." autocomplete="off">
+          <div id="productList" style="display:none;">
+            <select id="productSelect" size="5"></select>
           </div>
-          <div id="bmrResult" style="font-size:13px;color:#A08B74;margin-top:8px;"></div>
+          <div id="notFoundMsg" class="not-found" style="display:none;"></div>
+
+          <label for="barcodeInput">Штрихкод</label>
+          <div class="flex-row">
+            <input type="text" id="barcodeInput" placeholder="Введи або відскануй...">
+            <button class="btn-outline btn-icon" onclick="toggleScanner()"><img src="assets/camera.svg" width="20" height="20" alt=""></button>
+          </div>
+          <div id="scanner"></div>
+
+          <label for="weightInput">⚖️ Вага (г)</label>
+          <input type="number" id="weightInput" placeholder="0" inputmode="decimal">
+        </div>
+
+        <div class="card" id="resultCard" style="display:none;">
+          <div class="product-name" id="productName"></div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+            <span class="val" id="resKkal">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+            <span class="val" id="resProt">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+            <span class="val" id="resFat">0</span>
+          </div>
+          <div class="row">
+            <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+            <span class="val" id="resCarbs">0</span>
+          </div>
+          <div id="codeBadge" class="badge" style="display:none;"></div>
+        </div>
+
+        <button class="btn-orange" onclick="window.open(WEB_APP_URL, '_blank')">
+          ➕ Додати продукт чи рецепт
+        </button>
+
+        <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px;">
+          База даних продуктів створена у Google Sheets.
+        </p>
+      </div>
+
+      <!-- TAB: Profile -->
+      <div id="tabProfile" class="tab-content">
+        <div id="createPassScreen" style="display:none;">
+          <div class="page-header">
+            <h2>🔐 Створення профілю</h2>
+            <div class="subtitle">Створіть новий профіль</div>
+          </div>
+          <div class="card">
+            <div class="section-label"><span class="icon red">🔐</span> Створення профілю</div>
+            <label>Нікнейм</label>
+            <input type="text" id="createNick" placeholder="Ваш нік" autocomplete="off">
+            <label>Придумайте пароль</label>
+            <input type="password" id="createPass" placeholder="Пароль">
+            <label>Повторіть пароль</label>
+            <input type="password" id="createPassConfirm" placeholder="Повторіть пароль">
+            <button class="btn-primary" onclick="handleCreatePass()">🔐 Створити профіль</button>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.7;">
+              ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері та синхронізуються у хмару.
+              Пароль не зберігається — він використовується для шифрування.
+              Якщо забудете пароль, дані буде неможливо відновити.
+            </p>
+            <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Відновити з бекапу</button>
+            <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Очистити всі дані</button>
+          </div>
+        </div>
+
+        <div id="loginScreen" style="display:none;">
+          <div class="page-header">
+            <h2>🔐 Вхід в профіль</h2>
+            <div class="subtitle">Увійдіть або створіть новий профіль</div>
+          </div>
+          <div class="card">
+            <div class="section-label"><span class="icon red">🔐</span> Вхід в профіль</div>
+            <label>Нікнейм</label>
+            <input type="text" id="loginNick" placeholder="Ваш нік" autocomplete="off">
+            <label>Ваш пароль</label>
+            <input type="password" id="loginPass" placeholder="Пароль">
+            <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:12px;">
+              ⚠️ Дані синхронізуються між пристроями. Забули пароль? Натисніть "Очистити".
+            </p>
+            <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Очистити всі дані</button>
+          </div>
+        </div>
+
+        <div id="profileScreen" style="display:none;">
+          <div class="page-header">
+            <h2>👤 Профіль</h2>
+            <div class="subtitle">Ваш профіль та налаштування</div>
+          </div>
+          <div class="card">
+            <img id="profilePhoto" class="profile-photo" src="" alt="Фото">
+            <div class="flex-row" style="justify-content:center;margin-bottom:16px;">
+              <button class="btn-outline" onclick="pickPhoto()" style="font-size:13px;width:auto;padding:8px 16px;">📷 Фото</button>
+              <button class="btn-outline" onclick="setPhotoUrl()" style="font-size:13px;width:auto;padding:8px 16px;">🔗 URL</button>
+              <button class="btn-outline" onclick="removePhoto()" style="font-size:13px;width:auto;padding:8px 16px;color:var(--danger);">🗑</button>
+            </div>
+            <input type="file" id="photoFileInput" accept="image/*" style="display:none;">
+            <div class="profile-stats">
+              <div><span class="num" id="pWeight">—</span><span class="lbl">Вага (кг)</span></div>
+              <div><span class="num" id="pHeight">—</span><span class="lbl">Зріст (см)</span></div>
+              <div><span class="num" id="pAge">—</span><span class="lbl">Вік</span></div>
+              <div><span class="num" id="pNorm">—</span><span class="lbl">Норма ккал</span></div>
+            </div>
+            <div class="form-grid">
+              <div><label>Ім'я</label><input type="text" id="editName"></div>
+              <div><label>Вік</label><input type="number" id="editAge" min="1" max="150"></div>
+              <div><label>Стать</label>
+                <select id="editGender">
+                  <option value="male">Чоловіча</option>
+                  <option value="female">Жіноча</option>
+                </select>
+              </div>
+              <div><label>Вага (кг)</label><input type="number" id="editWeight" step="0.1"></div>
+              <div><label>Зріст (см)</label><input type="number" id="editHeight" step="1"></div>
+              <div><label>Норма ккал</label><input type="number" id="editNorm" step="1"></div>
+              <div class="full">
+                <label>📊 Розрахунок норми</label>
+                <div class="flex-row" style="gap:6px;">
+                  <button class="btn-outline" onclick="calcBMR()" style="font-size:13px;width:auto;flex:1;padding:12px;">🧮 Розрахувати BMR</button>
+                  <select id="editDeficit" style="width:auto;flex:1;margin-bottom:0;">
+                    <option value="-20">-20% (сильний дефіцит)</option>
+                    <option value="-15">-15%</option>
+                    <option value="-10">-10% (помірний дефіцит)</option>
+                    <option value="-5">-5%</option>
+                    <option value="0" selected>0% (підтримка)</option>
+                    <option value="5">+5%</option>
+                    <option value="10">+10% (набір маси)</option>
+                    <option value="15">+15%</option>
+                    <option value="20">+20% (сильний набір)</option>
+                  </select>
+                </div>
+                <div id="bmrResult" style="font-size:13px;color:var(--text-muted);margin-top:8px;"></div>
+              </div>
+            </div>
+            <button class="btn-green" onclick="saveProfile()">💾 Зберегти профіль</button>
+            <button class="btn-outline" onclick="showExport()" style="font-size:13px;">📦 Експорт даних</button>
+            <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Імпорт даних</button>
+            <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:var(--danger);">🧹 Вийти та очистити дані</button>
+          </div>
         </div>
       </div>
-      <button class="btn-green" onclick="saveProfile()">💾 Зберегти профіль</button>
-      <button class="btn-outline" onclick="showExport()" style="font-size:13px;">📦 Експорт даних</button>
-      <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Імпорт даних</button>
-      <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Вийти та очистити дані</button>
-    </div>
-  </div>
 
-  <!-- TAB: Diary -->
-  <div id="tabDiary" style="display:none;">
-    <div class="card coral">
-      <div class="section-label"><span class="icon">📅</span> Щоденник</div>
-      <label for="diaryDate">Дата</label>
-      <input type="date" id="diaryDate">
-      <div id="diarySummary" style="display:none;">
-        <div class="row">
-          <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
-          <span class="val" id="dTotalKkal">0</span>
+      <!-- TAB: Diary -->
+      <div id="tabDiary" class="tab-content">
+        <div class="page-header">
+          <h2>📓 Щоденник</h2>
+          <div class="subtitle">Харчування за сьогодні</div>
         </div>
-        <div class="row">
-          <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
-          <span class="val" id="dTotalProt">0</span>
+
+        <div class="card">
+          <div class="section-label"><span class="icon red">📅</span> Щоденник</div>
+          <label for="diaryDate">Дата</label>
+          <input type="date" id="diaryDate">
+          <div id="diarySummary" style="display:none;">
+            <div class="row">
+              <span class="row-label"><span class="row-icon kkal">🔥</span> Калорії</span>
+              <span class="val" id="dTotalKkal">0</span>
+            </div>
+            <div class="row">
+              <span class="row-label"><span class="row-icon prot">🥩</span> Білки</span>
+              <span class="val" id="dTotalProt">0</span>
+            </div>
+            <div class="row">
+              <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
+              <span class="val" id="dTotalFat">0</span>
+            </div>
+            <div class="row">
+              <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
+              <span class="val" id="dTotalCarbs">0</span>
+            </div>
+            <div class="row">
+              <span class="row-label"><span class="row-icon kkal">📊</span> % від норми</span>
+              <span class="val" id="dPercent">0%</span>
+            </div>
+          </div>
+          <div id="diaryItems"></div>
         </div>
-        <div class="row">
-          <span class="row-label"><span class="row-icon fat">🧈</span> Жири</span>
-          <span class="val" id="dTotalFat">0</span>
+
+        <div class="card">
+          <div class="section-label"><span class="icon orange">➕</span> Додати продукт</div>
+          <label>Пошук</label>
+          <div class="flex-row">
+            <input type="text" id="diarySearch" placeholder="Назва продукту...">
+            <input type="number" id="diaryWeight" placeholder="г" inputmode="decimal" style="width:80px;flex:none;">
+          </div>
+          <div id="diarySuggest" style="max-height:140px;overflow-y:auto;"></div>
+          <button class="btn-green" onclick="addDiaryEntry()" id="addDiaryBtn" disabled>➕ Додати</button>
         </div>
-        <div class="row">
-          <span class="row-label"><span class="row-icon carbs">🍞</span> Вуглеводи</span>
-          <span class="val" id="dTotalCarbs">0</span>
-        </div>
-        <div class="row">
-          <span class="row-label"><span class="row-icon kkal">📊</span> % від норми</span>
-          <span class="val" id="dPercent">0%</span>
+
+        <div class="card" id="infocard" style="display:none;">
+          <div class="section-label"><span class="icon green">📊</span> Інфографіка</div>
+          <div id="ringChart" class="ring-wrap"></div>
+          <div id="weekChart" style="margin-top:10px;"></div>
         </div>
       </div>
-      <div id="diaryItems"></div>
-    </div>
 
-    <div class="card gold">
-      <div class="section-label"><span class="icon">➕</span> Додати продукт</div>
-      <label>Пошук</label>
-      <div class="flex-row">
-        <input type="text" id="diarySearch" placeholder="Назва продукту...">
-        <input type="number" id="diaryWeight" placeholder="г" inputmode="decimal" style="width:80px;flex:none;">
+      <!-- TAB: Settings -->
+      <div id="tabSettings" class="tab-content">
+        <div class="page-header">
+          <h2>⚙️ Налаштування</h2>
+          <div class="subtitle">Синхронізація та дані</div>
+        </div>
+
+        <div class="card">
+          <div class="section-label"><span class="icon red">☁️</span> Синхронізація</div>
+          <div id="cloudStatus" style="text-align:center;padding:12px 0;font-size:14px;color:var(--text-muted);">
+            ○ Офлайн
+          </div>
+          <div id="cloudActions" style="display:none;">
+            <button class="btn-outline" onclick="syncToCloud()" style="font-size:13px;">🔄 Синхронізувати зараз</button>
+            <button class="btn-outline" onclick="cloudLogout()" style="font-size:13px;color:var(--danger);">🚪 Вийти з хмари</button>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:14px;line-height:1.6;">
+            ☁️ Дані шифруються вашим паролем на пристрої.
+            Сервер зберігає лише зашифровані блоби — ваш пароль ніколи не покидає браузер.
+          </p>
+        </div>
       </div>
-      <div id="diarySuggest" style="max-height:140px;overflow-y:auto;"></div>
-      <button class="btn-green" onclick="addDiaryEntry()" id="addDiaryBtn" disabled>➕ Додати</button>
+
     </div>
+  </main>
 
-    <div class="card green" id="infocard" style="display:none;">
-      <div class="section-label"><span class="icon">📊</span> Інфографіка</div>
-      <div id="ringChart" class="ring-wrap"></div>
-      <div id="weekChart" style="margin-top:10px;"></div>
-    </div>
-  </div>
+  <div id="toast" class="toast"></div>
 
-  <!-- TAB: Settings -->
-  <div id="tabSettings" style="display:none;">
-    <div class="card coral">
-      <div class="section-label"><span class="icon">☁️</span> Синхронізація</div>
-      <div id="cloudStatus" style="text-align:center;padding:12px 0;font-size:14px;color:#A08B74;">
-        ○ Офлайн
-      </div>
-      <div id="cloudActions" style="display:none;">
-        <button class="btn-outline" onclick="syncToCloud()" style="font-size:13px;">🔄 Синхронізувати зараз</button>
-        <button class="btn-outline" onclick="cloudLogout()" style="font-size:13px;color:#E06050;">🚪 Вийти з хмари</button>
-      </div>
-      <p style="font-size:12px;color:#BBA98E;margin-top:14px;line-height:1.6;">
-        ☁️ Дані шифруються вашим паролем на пристрої.
-        Сервер зберігає лише зашифровані блоби — ваш пароль ніколи не покидає браузер.
-      </p>
-    </div>
-  </div>
-
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script>
-// ========== CONFIG ==========
-const FOOD_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=0&single=true&output=tsv';
-const DISH_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=303617623&single=true&output=tsv';
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwvQV7U8dBareulZcDAQNkysAxhK4z8cmnWpF3WZvFxuPv5VcNh7X172FjrMlejx6FH5Q/exec';
-const CLOUD_URL = 'https://calories-calc.nitanaredleaf.workers.dev';
-
-// ========== CLOUD SYNC ==========
-var _cloudNick = localStorage.getItem('foodlook_cloud_nick') || '';
-var _syncTimeout = null;
-
-function isCloudLoggedIn() { return !!_cloudNick; }
-
-function updateCloudUI() {
-  var statusEl = document.getElementById('cloudStatus');
-  var actionsEl = document.getElementById('cloudActions');
-
-  if (isCloudLoggedIn()) {
-    statusEl.innerHTML = '● Синхронізовано як <strong>' + esc(_cloudNick) + '</strong>';
-    statusEl.style.color = '#2D7D5F';
-    actionsEl.style.display = 'block';
-  } else {
-    statusEl.innerHTML = '○ Офлайн';
-    statusEl.style.color = '#A08B74';
-    actionsEl.style.display = 'none';
-  }
-}
-
-async function cloudRegister(nick, pass) {
-  if (!_key) return;
-  var profileEnc = await encrypt(_profile, _key);
-  var diaryEnc = await encrypt(_diary, _key);
-
-  try {
-    var res = await fetch(CLOUD_URL + '/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nick: nick, password: pass, salt: localStorage.getItem('foodlook_salt'), profile_enc: profileEnc, diary_enc: diaryEnc }),
-    });
-    var data = await res.json();
-    if (data.error) { showToast('☁️ ' + data.error); return false; }
-    _cloudNick = nick;
-    localStorage.setItem('foodlook_cloud_nick', nick);
-    var passHash = await sha256str(pass);
-    localStorage.setItem('foodlook_cloud_hash', passHash);
-    return true;
-  } catch (e) {
-    showToast('☁️ Помилка реєстрації в хмарі');
-    return false;
-  }
-}
-
-async function cloudLoginFetch(nick, pass) {
-  try {
-    var res = await fetch(CLOUD_URL + '/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nick: nick, password: pass }),
-    });
-    var data = await res.json();
-    if (data.error) return null;
-    return data;
-  } catch (e) {
-    return null;
-  }
-}
-
-function cloudLogout() {
-  _cloudNick = '';
-  localStorage.removeItem('foodlook_cloud_nick');
-  localStorage.removeItem('foodlook_cloud_hash');
-  sessionStorage.removeItem('foodlook_nick');
-  sessionStorage.removeItem('foodlook_pass');
-  showToast('✅ Вийшли з хмари');
-  updateCloudUI();
-}
-
-async function syncToCloud() {
-  if (!isCloudLoggedIn() || !_key) {
-    console.log('[sync] skipped: cloudNick=' + _cloudNick + ' key=' + !!_key);
-    return;
-  }
-  var passHash = localStorage.getItem('foodlook_cloud_hash');
-  if (!passHash) {
-    console.log('[sync] skipped: no passHash');
-    return;
-  }
-  var profileEnc = await encrypt(_profile, _key);
-  var diaryEnc = await encrypt(_diary, _key);
-  console.log('[sync] sending:', { nick: _cloudNick, profileLen: profileEnc.length, diaryLen: diaryEnc.length });
-
-  try {
-    var res = await fetch(CLOUD_URL + '/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nick: _cloudNick, password: passHash, profile_enc: profileEnc, diary_enc: diaryEnc }),
-    });
-    var data = await res.json();
-    console.log('[sync] response:', res.status, data);
-    if (data.ok) {
-      var statusEl = document.getElementById('cloudStatus');
-      if (statusEl) statusEl.innerHTML = '● Синхронізовано ' + new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-    } else {
-      showToast('⚠️ Синхронізація: ' + (data.error || 'помилка'));
-    }
-  } catch (e) {
-    console.error('[sync] error:', e);
-    var statusEl = document.getElementById('cloudStatus');
-    if (statusEl) statusEl.innerHTML = '⚠ Помилка синхронізації';
-  }
-}
-
-function syncDebounced() {
-  if (!isCloudLoggedIn()) return;
-  clearTimeout(_syncTimeout);
-  _syncTimeout = setTimeout(syncToCloud, 2000);
-}
-
-async function syncFromCloud() {
-  if (!isCloudLoggedIn() || !_key) {
-    console.log('[syncFrom] skipped: cloudNick=' + _cloudNick + ' key=' + !!_key);
-    return;
-  }
-  var passHash = localStorage.getItem('foodlook_cloud_hash');
-  if (!passHash) {
-    console.log('[syncFrom] skipped: no passHash');
-    return;
-  }
-
-  try {
-    var url = CLOUD_URL + '/sync?nick=' + encodeURIComponent(_cloudNick) + '&password=' + encodeURIComponent(passHash);
-    console.log('[syncFrom] fetching...');
-    var res = await fetch(url);
-    var data = await res.json();
-    console.log('[syncFrom] response:', res.status, data);
-    if (data.error) return;
-
-    var cloudProfile = data.profile_enc ? await decrypt(data.profile_enc, _key) : null;
-    var cloudDiary = data.diary_enc ? await decrypt(data.diary_enc, _key) : null;
-    console.log('[syncFrom] decrypted:', { profile: !!cloudProfile, diary: !!cloudDiary });
-
-    if (cloudProfile && cloudProfile.name) _profile = cloudProfile;
-    if (cloudDiary && Object.keys(cloudDiary).length > 0) _diary = cloudDiary;
-
-    await saveLocal();
-    var statusEl = document.getElementById('cloudStatus');
-    if (statusEl) statusEl.innerHTML = '● Синхронізовано ' + new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-  } catch (e) {
-    console.error('[syncFrom] error:', e);
-  }
-}
-
-async function sha256str(str) {
-  var data = new TextEncoder().encode(str);
-  var hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-}
-
-async function autoLogin() {
-  var nick = sessionStorage.getItem('foodlook_nick');
-  var pass = sessionStorage.getItem('foodlook_pass');
-  if (!nick || !pass) return;
-  if (!hasSalt()) return;
-
-  var salt = fromB64(localStorage.getItem('foodlook_salt'));
-  _key = await deriveKey(pass, salt);
-  try {
-    var pStr = localStorage.getItem('foodlook_profile');
-    _profile = pStr ? await decrypt(pStr, _key) : { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-    var dStr = localStorage.getItem('foodlook_diary');
-    _diary = dStr ? await decrypt(dStr, _key) : {};
-  } catch (e) {
-    _key = null;
-    sessionStorage.removeItem('foodlook_nick');
-    sessionStorage.removeItem('foodlook_pass');
-    return;
-  }
-
-  _cloudNick = localStorage.getItem('foodlook_cloud_nick') || '';
-  showToast('✅ Автовхід: ' + nick);
-  showProfileScreen();
-  loadTodayDiary();
-}
-
-var CATEGORY_EMOJI = {
-  'Овочі':'🥬','Фрукти':'🍎','Ягоди':'🫐','Горіхи та сухофрукти':'🥜','Гриби':'🍄',
-  'М\'ясо':'🥩','Птиця':'🍗','Риба':'🐟','Морепродукти':'🦐','Яйця':'🥚',
-  'Молочні продукти':'🥛','Сири':'🧀','Масло та маргарин':'🧈',
-  'Хліб та випічка':'🍞','Кондитерські вироби':'🍪','Шоколад та цукерки':'🍫','Печиво та вафлі':'🧇','Жувальні цукерки та льодяники':'🍬','Снеки':'🍿',
-  'Крупи':'🌾','Макаронні вироби':'🍝','Бобові':'🫘','Сухі сніданки':'🥣',
-  'Консерви':'🥫','Соуси та кетчупи':'🥫','Спеції та приправи':'🌿','Трави':'🌿',
-  'Сіль, цукор':'🧂','Мед та варення':'🍯','Олія та оцет':'🫒','Кава':'☕','Чай':'🍵','Напої':'🥤','Вода':'💧','Алкоголь':'🍷',
-  'Заморожені продукти':'❄️','Готові страви':'🍱','Дитяче харчування':'🍼','Здорове харчування':'💚'
-};
-function catEmoji(c) {
-  if (!c) return '';
-  var m = c.match(/^(\S+)\s/);
-  if (m && m[1].length > 1) return m[1] + ' ';
-  return CATEGORY_EMOJI[c] || '';
-}
-
-// ========== CRYPTO ==========
-async function deriveKey(password, salt) {
-  var keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial,
-    { name: 'AES-GCM', length: 256 },
-    false, ['encrypt', 'decrypt']
-  );
-}
-function genSalt() { return crypto.getRandomValues(new Uint8Array(16)); }
-function toB64(u8) { return btoa(String.fromCharCode.apply(null, u8)); }
-function fromB64(str) { return Uint8Array.from(atob(str), function(c) { return c.charCodeAt(0); }); }
-
-async function encrypt(obj, key) {
-  var iv = crypto.getRandomValues(new Uint8Array(12));
-  var ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(JSON.stringify(obj)));
-  return toB64(iv) + ':' + toB64(new Uint8Array(ct));
-}
-async function decrypt(str, key) {
-  var p = str.split(':');
-  var dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(p[0]) }, key, fromB64(p[1]));
-  return JSON.parse(new TextDecoder().decode(dec));
-}
-
-// ========== AUTH (localStorage) ==========
-var _key = null;
-var _profile = null;
-var _diary = null;
-
-function hasSalt() { return localStorage.getItem('foodlook_salt') !== null; }
-
-async function login(pass) {
-  if (!hasSalt()) {
-    var salt = genSalt();
-    localStorage.setItem('foodlook_salt', toB64(salt));
-    _key = await deriveKey(pass, salt);
-    _profile = { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-    _diary = {};
-    await saveLocal();
-    return true;
-  }
-  var salt = fromB64(localStorage.getItem('foodlook_salt'));
-  _key = await deriveKey(pass, salt);
-  try {
-    var pStr = localStorage.getItem('foodlook_profile');
-    _profile = pStr ? await decrypt(pStr, _key) : { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-    var dStr = localStorage.getItem('foodlook_diary');
-    _diary = dStr ? await decrypt(dStr, _key) : {};
-    return true;
-  } catch(e) { _key = null; return false; }
-}
-
-async function saveLocal() {
-  if (!_key) return;
-  localStorage.setItem('foodlook_profile', await encrypt(_profile, _key));
-  localStorage.setItem('foodlook_diary', await encrypt(_diary, _key));
-  syncDebounced();
-}
-
-async function handleLogin() {
-  var nick = document.getElementById('loginNick').value.trim();
-  var pass = document.getElementById('loginPass').value;
-  if (!nick) { showToast('❌ Введіть нік'); return; }
-  if (!pass) { showToast('❌ Введи пароль'); return; }
-
-  // Try to login to cloud first
-  var cloudData = await cloudLoginFetch(nick, pass);
-  if (cloudData) {
-    // Cloud login successful - restore salt and decrypt
-    localStorage.setItem('foodlook_salt', cloudData.salt);
-    var salt = fromB64(cloudData.salt);
-    _key = await deriveKey(pass, salt);
-    try {
-      _profile = cloudData.profile_enc ? await decrypt(cloudData.profile_enc, _key) : { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-      _diary = cloudData.diary_enc ? await decrypt(cloudData.diary_enc, _key) : {};
-    } catch (e) {
-      showToast('❌ Невірний пароль');
-      _key = null;
-      return;
-    }
-    await saveLocal();
-    _cloudNick = nick;
-    localStorage.setItem('foodlook_cloud_nick', nick);
-    var passHash = await sha256str(pass);
-    localStorage.setItem('foodlook_cloud_hash', passHash);
-    sessionStorage.setItem('foodlook_nick', nick);
-    sessionStorage.setItem('foodlook_pass', pass);
-    showToast('✅ Ввійшли та синхронізовано');
-    showProfileScreen();
-    loadTodayDiary();
-    document.getElementById('loginPass').value = '';
-    document.getElementById('loginNick').value = '';
-  } else {
-    // Try local login
-    var ok = await login(pass);
-    if (ok) {
-      sessionStorage.setItem('foodlook_nick', nick);
-      sessionStorage.setItem('foodlook_pass', pass);
-      showToast('✅ Увійшов (офлайн)');
-      showProfileScreen();
-      loadTodayDiary();
-      document.getElementById('loginPass').value = '';
-      document.getElementById('loginNick').value = '';
-    } else {
-      showToast('❌ Невірний пароль');
-    }
-  }
-}
-
-document.getElementById('loginPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
-document.getElementById('loginNick').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
-document.getElementById('createPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
-document.getElementById('createPassConfirm').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
-document.getElementById('createNick').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
-document.getElementById('photoFileInput').addEventListener('change', handlePhotoFile);
-document.getElementById('diaryWeight').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !document.getElementById('addDiaryBtn').disabled) addDiaryEntry(); });
-
-// ========== PROFILE ==========
-function showProfileScreen() {
-  if (!_profile) _profile = { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-  document.getElementById('createPassScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('profileScreen').style.display = 'block';
-  renderProfile();
-}
-
-function showPasswordScreen() {
-  document.getElementById('profileScreen').style.display = 'none';
-  if (hasSalt()) {
-    document.getElementById('createPassScreen').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('loginPass').value = '';
-    document.getElementById('loginNick').value = _cloudNick || '';
-    document.getElementById('loginNick').focus();
-  } else {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('createPassScreen').style.display = 'block';
-    document.getElementById('createPass').value = '';
-    document.getElementById('createPassConfirm').value = '';
-    document.getElementById('createNick').value = '';
-    document.getElementById('createNick').focus();
-  }
-}
-
-function clearAllData() {
-  if (!confirm('🧹 Видалити всі локальні дані (профіль, щоденник, пароль)? Це не можна скасувати.')) return;
-  localStorage.removeItem('foodlook_salt');
-  localStorage.removeItem('foodlook_profile');
-  localStorage.removeItem('foodlook_diary');
-  localStorage.removeItem('foodlook_backup');
-  localStorage.removeItem('foodlook_cloud_nick');
-  localStorage.removeItem('foodlook_cloud_hash');
-  sessionStorage.removeItem('foodlook_nick');
-  sessionStorage.removeItem('foodlook_pass');
-  _key = null; _profile = null; _diary = null; _cloudNick = '';
-  showToast('✅ Дані очищено');
-  showPasswordScreen();
-}
-
-async function handleCreatePass() {
-  var nick = document.getElementById('createNick').value.trim();
-  var pass = document.getElementById('createPass').value;
-  var confirm = document.getElementById('createPassConfirm').value;
-  if (!nick) { showToast('❌ Введіть нік'); return; }
-  if (!pass) { showToast('❌ Придумайте пароль'); return; }
-  if (pass.length < 4) { showToast('❌ Пароль має бути хоча б 4 символи'); return; }
-  if (pass !== confirm) { showToast('❌ Паролі не співпадають'); return; }
-  var ok = await login(pass);
-  if (ok) {
-    sessionStorage.setItem('foodlook_nick', nick);
-    sessionStorage.setItem('foodlook_pass', pass);
-    var cloudOk = await cloudRegister(nick, pass);
-    if (cloudOk) {
-      showToast('✅ Профіль створено та синхронізовано!');
-    } else {
-      showToast('✅ Профіль створено (офлайн)');
-    }
-    showProfileScreen();
-    loadTodayDiary();
-    document.getElementById('createPass').value = '';
-    document.getElementById('createPassConfirm').value = '';
-    document.getElementById('createNick').value = '';
-  } else {
-    showToast('❌ Помилка створення профілю');
-  }
-}
-
-function renderProfile() {
-  document.getElementById('pWeight').textContent = _profile.weight || '—';
-  document.getElementById('pHeight').textContent = _profile.height || '—';
-  document.getElementById('pAge').textContent = _profile.age || '—';
-  document.getElementById('pNorm').textContent = _profile.kcalNorm || '—';
-  document.getElementById('editName').value = _profile.name || '';
-  document.getElementById('editAge').value = _profile.age || '';
-  document.getElementById('editGender').value = _profile.gender || 'male';
-  document.getElementById('editWeight').value = _profile.weight || '';
-  document.getElementById('editHeight').value = _profile.height || '';
-  document.getElementById('editNorm').value = _profile.kcalNorm || '';
-  document.getElementById('editDeficit').value = _profile.deficit || 0;
-  var photo = document.getElementById('profilePhoto');
-  if (_profile.photo) { photo.src = _profile.photo; photo.style.background = ''; }
-  else if (_profile.photoUrl) { photo.src = _profile.photoUrl; photo.style.background = ''; }
-  else { photo.src = ''; photo.style.background = 'linear-gradient(135deg, #F0E8DE, #E8DDD0)'; }
-  document.getElementById('bmrResult').textContent = '';
-}
-
-function pickPhoto() { document.getElementById('photoFileInput').click(); }
-
-function handlePhotoFile(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var maxSize = 200;
-      var w = img.width, h = img.height;
-      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
-      else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      _profile.photo = canvas.toDataURL('image/jpeg', 0.7);
-      _profile.photoUrl = '';
-      renderProfile();
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-}
-
-function setPhotoUrl() {
-  var url = prompt('🔗 Введіть URL фото:', _profile.photoUrl || '');
-  if (url === null) return;
-  if (url) { _profile.photoUrl = url; _profile.photo = ''; }
-  else { _profile.photoUrl = ''; }
-  renderProfile();
-}
-
-function removePhoto() { _profile.photo = ''; _profile.photoUrl = ''; renderProfile(); }
-
-async function saveProfile() {
-  if (!_key) { showToast('❌ Спочатку увійди'); return; }
-  _profile.name = document.getElementById('editName').value || '';
-  _profile.age = parseInt(document.getElementById('editAge').value) || 0;
-  _profile.gender = document.getElementById('editGender').value || 'male';
-  _profile.weight = parseFloat(document.getElementById('editWeight').value) || 0;
-  _profile.height = parseFloat(document.getElementById('editHeight').value) || 0;
-  _profile.kcalNorm = parseFloat(document.getElementById('editNorm').value) || 0;
-  _profile.deficit = parseInt(document.getElementById('editDeficit').value) || 0;
-  await saveLocal();
-  showToast('✅ Профіль збережено');
-  renderProfile();
-}
-
-function calcBMR() {
-  var weight = parseFloat(document.getElementById('editWeight').value) || 0;
-  var height = parseFloat(document.getElementById('editHeight').value) || 0;
-  var age = parseFloat(document.getElementById('editAge').value) || 0;
-  var gender = document.getElementById('editGender').value;
-  if (!weight || !height || !age) {
-    document.getElementById('bmrResult').textContent = '❌ Заповніть вагу, зріст та вік';
-    return;
-  }
-  var bmr = gender === 'male'
-    ? 10 * weight + 6.25 * height - 5 * age + 5
-    : 10 * weight + 6.25 * height - 5 * age - 161;
-  var deficit = parseInt(document.getElementById('editDeficit').value) || 0;
-  var adjusted = Math.round(bmr * (1 + deficit / 100));
-  document.getElementById('bmrResult').innerHTML = 'BMR: <strong>' + Math.round(bmr) + '</strong> ккал' +
-    (deficit !== 0 ? ' → ' + (deficit > 0 ? '+' : '') + deficit + '%: <strong>' + adjusted + '</strong> ккал' : '');
-  document.getElementById('editNorm').value = adjusted;
-}
-
-// ========== EXPORT / IMPORT ==========
-function showExport() {
-  var pass = prompt('📦 Введіть ваш пароль профілю для шифрування бекапу:');
-  if (!pass) return;
-  doExport(pass);
-}
-
-async function doExport(pass) {
-  var salt = genSalt();
-  var expKey = await deriveKey(pass, salt);
-  var data = { profile: _profile || {}, diary: _diary || {} };
-  var encrypted = await encrypt(data, expKey);
-  var json = JSON.stringify({ v: 1, salt: toB64(salt), data: encrypted });
-  var blob = new Blob([json], { type: 'application/json' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = 'foodlook-backup.json'; a.click();
-  URL.revokeObjectURL(url);
-  showToast('✅ Бекап створено');
-  localStorage.setItem('foodlook_backup', Date.now().toString());
-}
-
-function showImport() {
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      var pass = prompt('📂 Введіть ваш пароль профілю для розшифрування:');
-      if (!pass) return;
-      doImport(ev.target.result, pass);
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-async function doImport(jsonStr, pass) {
-  try {
-    var pkg = JSON.parse(jsonStr);
-    var salt = fromB64(pkg.salt);
-    var impKey = await deriveKey(pass, salt);
-    var data = await decrypt(pkg.data, impKey);
-    var wasLoggedIn = !!_key;
-    if (!_key) {
-      localStorage.setItem('foodlook_salt', toB64(salt));
-      _key = impKey;
-    }
-    _profile = data.profile || { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-    _diary = data.diary || {};
-    await saveLocal();
-    if (!wasLoggedIn) {
-      showToast('✅ Дані відновлено!');
-      showProfileScreen();
-      loadTodayDiary();
-    } else {
-      showToast('✅ Дані імпортовано');
-      renderProfile();
-      loadTodayDiary();
-    }
-  } catch(e) {
-    showToast('❌ Невірний пароль або пошкоджений файл');
-  }
-}
-
-function checkBackup() {
-  try {
-    var last = localStorage.getItem('foodlook_backup');
-    if (!last || Date.now() - parseInt(last) > 7 * 86400000) {
-      setTimeout(function() { if (confirm('📦 Минуло >7 днів з бекапу. Створити зараз?')) showExport(); }, 5000);
-    }
-  } catch(e) {}
-}
-
-// ========== DIARY ==========
-function loadTodayDiary() {
-  if (!_key) return;
-  var today = new Date().toISOString().slice(0,10);
-  document.getElementById('diaryDate').value = today;
-  renderDiary(today);
-}
-
-document.getElementById('diaryDate').addEventListener('change', function() { if (this.value) renderDiary(this.value); });
-
-function getDiaryItems(date) { return (_diary && _diary[date]) || []; }
-
-function renderDiary(date) {
-  var el = document.getElementById('diaryItems');
-  var summary = document.getElementById('diarySummary');
-  el.innerHTML = '';
-  var items = getDiaryItems(date);
-  if (items.length === 0) {
-    summary.style.display = 'none';
-    el.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:15px;padding:24px;font-style:italic;">🍽️ Записів немає</div>';
-    renderInfographics([]);
-    return;
-  }
-
-  var tKkal = 0, tProt = 0, tFat = 0, tCarbs = 0;
-  items.forEach(function(item, idx) {
-    tKkal += item.kkal; tProt += item.prot; tFat += item.fat; tCarbs += item.carbs;
-    var d = document.createElement('div');
-    d.className = 'diary-item';
-    d.innerHTML = '<span class="diary-name">' + esc(item.name) + ' (' + item.weight + 'г)</span>' +
-      '<span class="diary-kkal">' + Math.round(item.kkal) + ' ккал</span>' +
-      '<span class="diary-del" onclick="deleteDiaryItem(' + idx + ')">✕</span>';
-    el.appendChild(d);
-  });
-
-  var norm = (_profile && _profile.kcalNorm) || 2000;
-  document.getElementById('dTotalKkal').textContent = Math.round(tKkal);
-  document.getElementById('dTotalProt').textContent = Math.round(tProt) + 'г';
-  document.getElementById('dTotalFat').textContent = Math.round(tFat) + 'г';
-  document.getElementById('dTotalCarbs').textContent = Math.round(tCarbs) + 'г';
-  document.getElementById('dPercent').textContent = Math.round(tKkal / norm * 100) + '%';
-  summary.style.display = 'block';
-  renderInfographics(items);
-}
-
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-var _diarySelected = null;
-
-document.getElementById('diarySearch').addEventListener('input', function() {
-  var q = this.value.toLowerCase().trim();
-  var el = document.getElementById('diarySuggest');
-  el.innerHTML = '';
-  _diarySelected = null;
-  document.getElementById('addDiaryBtn').disabled = true;
-  if (!q) return;
-  var filtered = items.filter(function(p) { return p.name.toLowerCase().includes(q); }).slice(0, 10);
-  filtered.forEach(function(p) {
-    var d = document.createElement('div');
-    d.textContent = p.name;
-    d.onclick = function() {
-      document.getElementById('diarySearch').value = p.name;
-      el.innerHTML = '';
-      _diarySelected = p;
-      document.getElementById('addDiaryBtn').disabled = !document.getElementById('diaryWeight').value;
-    };
-    el.appendChild(d);
-  });
-});
-
-document.getElementById('diaryWeight').addEventListener('input', function() {
-  document.getElementById('addDiaryBtn').disabled = !this.value || !_diarySelected;
-});
-
-async function addDiaryEntry() {
-  var p = _diarySelected;
-  var w = parseFloat(document.getElementById('diaryWeight').value) || 0;
-  if (!p || w <= 0) { showToast('❌ Виберіть продукт та вагу'); return; }
-  if (!_key) { showToast('❌ Спочатку увійдіть в профіль'); return; }
-  var date = document.getElementById('diaryDate').value || new Date().toISOString().slice(0,10);
-  var factor = w / 100;
-  var entry = { name: p.name, weight: w, kkal: p.kkal * factor, prot: p.prot * factor, fat: p.fat * factor, carbs: p.carbs * factor };
-  if (!_diary[date]) _diary[date] = [];
-  _diary[date].push(entry);
-  await saveLocal();
-  showToast('✅ Додано');
-  document.getElementById('diarySearch').value = '';
-  document.getElementById('diaryWeight').value = '';
-  _diarySelected = null;
-  document.getElementById('addDiaryBtn').disabled = true;
-  renderDiary(date);
-}
-
-async function deleteDiaryItem(idx) {
-  var date = document.getElementById('diaryDate').value;
-  if (!_diary[date] || idx < 0 || idx >= _diary[date].length) return;
-  _diary[date].splice(idx, 1);
-  await saveLocal();
-  renderDiary(date);
-}
-
-// ========== INFOGRAPHICS ==========
-function renderInfographics(items) {
-  var card = document.getElementById('infocard');
-  if (!items || items.length === 0) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  var tProt = 0, tFat = 0, tCarbs = 0;
-  items.forEach(function(i) { tProt += i.prot; tFat += i.fat; tCarbs += i.carbs; });
-  var total = tProt + tFat + tCarbs;
-  var ring = document.getElementById('ringChart');
-  if (total > 0) {
-    ring.innerHTML = '';
-    ring.appendChild(makeRing(tProt / total * 100, '#2D7D5F', '🥩 Білки'));
-    ring.appendChild(makeRing(tFat / total * 100, '#E8A849', '🧈 Жири'));
-    ring.appendChild(makeRing(tCarbs / total * 100, '#E8735A', '🍞 Вуглеводи'));
-  }
-  var weekEl = document.getElementById('weekChart');
-  if (_profile && _profile.kcalNorm) { renderWeekChart(weekEl); }
-  else { weekEl.innerHTML = '<div style="text-align:center;color:#BBA98E;font-size:13px;font-style:italic;padding:12px;">Встановіть норму ккал в профілі</div>'; }
-}
-
-function makeRing(pct, color, label) {
-  var wrap = document.createElement('div');
-  wrap.style.textAlign = 'center';
-  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('width', '96'); svg.setAttribute('height', '96'); svg.setAttribute('viewBox', '0 0 36 36');
-  var r = 15.9, circ = 2 * Math.PI * r;
-  ['#F0E8DE', color].forEach(function(stroke, i) {
-    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '18'); circle.setAttribute('cy', '18'); circle.setAttribute('r', '' + r);
-    circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', stroke); circle.setAttribute('stroke-width', '3.5');
-    circle.setAttribute('stroke-linecap', 'round');
-    if (i === 1) {
-      circle.setAttribute('stroke-dasharray', '' + circ);
-      circle.setAttribute('stroke-dashoffset', '' + (circ - pct / 100 * circ));
-      circle.setAttribute('transform', 'rotate(-90 18 18)');
-    }
-    svg.appendChild(circle);
-  });
-  wrap.appendChild(svg);
-  var lbl = document.createElement('div');
-  lbl.className = 'ring-label';
-  lbl.textContent = Math.round(pct) + '% ' + label;
-  wrap.appendChild(lbl);
-  return wrap;
-}
-
-function renderWeekChart(el) {
-  var norm = (_profile && _profile.kcalNorm) || 2000;
-  var dates = [];
-  var today = new Date();
-  for (var i = 6; i >= 0; i--) {
-    var d = new Date(today); d.setDate(d.getDate() - i);
-    dates.push(d.toISOString().slice(0,10));
-  }
-  el.innerHTML = '<div style="font-size:15px;font-weight:700;margin-bottom:10px;text-align:center;font-family:Playfair Display,serif;color:#3D2B1F;">Останні 7 днів</div>';
-  var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
-  dates.forEach(function(d) {
-    var items = getDiaryItems(d);
-    var kkal = 0;
-    items.forEach(function(it) { kkal += it.kkal; });
-    var pct = Math.min(100, kkal / norm * 100);
-    var row = document.createElement('div');
-    row.className = 'chart-row';
-    var color = pct > 100 ? '#E06050' : (pct > 80 ? '#2D7D5F' : '#E8A849');
-    row.innerHTML = '<span style="min-width:36px;font-weight:600;">' + dayNames[new Date(d).getDay()] + '</span>' +
-      '<div class="bar" style="width:' + Math.max(3, pct) + '%;background:' + color + ';"></div>' +
-      '<span class="bar-label">' + Math.round(kkal) + '</span>';
-    el.appendChild(row);
-  });
-}
-
-// ========== TABS ==========
-function switchTab(tab) {
-  document.querySelectorAll('.tab-bar button').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelector('.tab-bar button[data-tab="' + tab + '"]').classList.add('active');
-  ['Calc','Profile','Diary','Settings'].forEach(function(t) {
-    document.getElementById('tab' + t).style.display = t.toLowerCase() === tab ? 'block' : 'none';
-  });
-  if (tab === 'profile') { if (_key) showProfileScreen(); else showPasswordScreen(); }
-  if (tab === 'diary' && _key) loadTodayDiary();
-  if (tab === 'settings') updateCloudUI();
-}
-
-// ========== CALCULATOR ==========
-let html5QrCode = null, scannerRunning = false, items = [], currentItem = null;
-
-const foodP = fetch(FOOD_TSV).then(r => r.text()).catch(() => '');
-const dishP = DISH_TSV ? fetch(DISH_TSV).then(r => r.text()).catch(() => '') : Promise.resolve('');
-
-Promise.all([foodP, dishP]).then(([foodText, dishText]) => {
-  items = [];
-  if (foodText) {
-    const lines = foodText.trim().split('\n');
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split('\t');
-      if (cols[0] && cols[0].trim()) {
-        items.push({ type: 'product', name: cols[0].trim(),
-          kkal: parseFloat(cols[1]) || 0, prot: parseFloat(cols[2]) || 0,
-          fat: parseFloat(cols[3]) || 0, carbs: parseFloat(cols[4]) || 0,
-          code: cols[5] ? cols[5].trim() : '', category: cols[6] ? cols[6].trim() : '' });
-      }
-    }
-  }
-  if (dishText) {
-    const lines = dishText.trim().split('\n');
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split('\t');
-      if (cols[0] && cols[1] && cols[1].trim()) {
-        items.push({ type: 'dish', name: cols[1].trim(),
-          kkal: parseFloat(cols[2]) || 0, prot: parseFloat(cols[3]) || 0,
-          fat: parseFloat(cols[4]) || 0, carbs: parseFloat(cols[5]) || 0, ingredients: cols[6] || '' });
-      }
-    }
-  }
-  document.getElementById('loadingMsg').style.display = 'none';
-  document.getElementById('content').style.display = 'block';
-  if (items.length === 0) showToast('❌ База порожня', 4000);
-  checkBackup();
-  autoLogin();
-}).catch(err => {
-  document.getElementById('loadingMsg').innerHTML = '❌ Помилка: ' + err.message;
-});
-
-const searchInput = document.getElementById('searchInput');
-const productSelect = document.getElementById('productSelect');
-const productList = document.getElementById('productList');
-const notFoundMsg = document.getElementById('notFoundMsg');
-let searchTimeout;
-
-searchInput.addEventListener('input', () => { clearTimeout(searchTimeout); searchTimeout = setTimeout(doSearch, 200); });
-searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
-
-function doSearch() {
-  const q = searchInput.value.toLowerCase().trim();
-  notFoundMsg.style.display = 'none';
-  if (!q) { productList.style.display = 'none'; currentItem = null; document.getElementById('resultCard').style.display = 'none'; return; }
-  barcodeInput.value = '';
-  const filtered = items.filter(p => p.name.toLowerCase().includes(q) || (p.code && p.code.includes(q)));
-  if (filtered.length === 0) {
-    productList.style.display = 'none';
-    notFoundMsg.innerHTML = '❌ Немає в базі. <a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#E8735A;font-weight:600;">➕ Додати</a>';
-    notFoundMsg.style.display = 'block'; currentItem = null; document.getElementById('resultCard').style.display = 'none'; return;
-  }
-  if (filtered.length > 20) { productList.style.display = 'none'; notFoundMsg.style.display = 'none'; return; }
-  notFoundMsg.style.display = 'none';
-  productSelect.innerHTML = '';
-  filtered.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.name;
-    opt.textContent = (p.type === 'dish' ? '[🍲] ' : (p.category ? catEmoji(p.category) : '')) + p.name + (p.code ? ' [' + p.code + ']' : '');
-    productSelect.appendChild(opt);
-  });
-  productList.style.display = 'block';
-}
-
-productSelect.addEventListener('change', () => {
-  const p = items.find(x => x.name === productSelect.value);
-  if (p) selectItem(p);
-  productList.style.display = 'none';
-});
-
-function selectItem(p) {
-  currentItem = p;
-  searchInput.value = (p.type === 'dish' ? '🍲 ' : (p.category ? catEmoji(p.category) : '')) + p.name;
-  productList.style.display = 'none'; notFoundMsg.style.display = 'none';
-  barcodeInput.value = p.code || ''; updateResult();
-}
-
-const barcodeInput = document.getElementById('barcodeInput');
-barcodeInput.addEventListener('input', () => { lookupBarcode(barcodeInput.value.trim()); });
-barcodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(barcodeInput.value.trim()); } });
-
-function lookupBarcode(code) {
-  productList.style.display = 'none'; notFoundMsg.style.display = 'none'; searchInput.value = '';
-  if (!code) { currentItem = null; document.getElementById('resultCard').style.display = 'none'; return; }
-  const p = items.find(x => x.code === code);
-  if (p) { selectItem(p); showToast('✅ ' + p.name, 2000); }
-  else {
-    currentItem = null; document.getElementById('resultCard').style.display = 'none';
-    notFoundMsg.innerHTML = '📷 Код: ' + code + '<br><a href="javascript:void(0)" onclick="window.open(WEB_APP_URL,\'_blank\')" style="color:#E8735A;font-weight:600;">➕ Додати</a>';
-    notFoundMsg.style.display = 'block';
-  }
-}
-
-function toggleScanner() {
-  if (scannerRunning) { stopScanner(); return; }
-  document.getElementById('scanner').style.display = 'block';
-  if (!html5QrCode) html5QrCode = new Html5Qrcode("scanner");
-  html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, onScanSuccess)
-    .then(() => { scannerRunning = true; }).catch(err => showToast('❌ Камера: ' + err));
-}
-function stopScanner() {
-  if (html5QrCode) html5QrCode.stop().then(() => { scannerRunning = false; document.getElementById('scanner').style.display = 'none'; });
-}
-function onScanSuccess(decodedText) { stopScanner(); barcodeInput.value = decodedText; lookupBarcode(decodedText); }
-
-const weightInput = document.getElementById('weightInput');
-weightInput.addEventListener('input', updateResult);
-function updateResult() {
-  const w = parseFloat(weightInput.value) || 0;
-  if (!currentItem || w <= 0) { document.getElementById('resultCard').style.display = 'none'; return; }
-  const factor = w / 100;
-  const tag = currentItem.type === 'dish' ? '🍲 ' : (currentItem.category ? catEmoji(currentItem.category) : '');
-  document.getElementById('productName').textContent = tag + currentItem.name;
-  document.getElementById('resKkal').textContent = Math.round(currentItem.kkal * factor * 10) / 10;
-  document.getElementById('resProt').textContent = Math.round(currentItem.prot * factor * 10) / 10;
-  document.getElementById('resFat').textContent = Math.round(currentItem.fat * factor * 10) / 10;
-  document.getElementById('resCarbs').textContent = Math.round(currentItem.carbs * factor * 10) / 10;
-  const badge = document.getElementById('codeBadge');
-  if (currentItem.code) { badge.textContent = '📦 ' + currentItem.code; badge.style.display = 'inline-flex'; }
-  else if (currentItem.type === 'dish') { badge.textContent = '🍲 Страва'; badge.style.display = 'inline-flex'; }
-  else { badge.style.display = 'none'; }
-  document.getElementById('resultCard').style.display = 'block';
-}
-
-function showToast(msg, d) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), d || 3000);
-}
-</script>
+  <script src="js/app.js"></script>
 </body>
 </html>
