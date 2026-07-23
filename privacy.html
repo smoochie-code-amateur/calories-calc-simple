@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Політика приватності — FoodLook</title>
+  <link rel="icon" href="assets/flame.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,400;0,600;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F2E9CC;
+      --card: #FFF8EB;
+      --primary: #D44239;
+      --text: #2B1810;
+      --text-secondary: #7A6B5D;
+      --text-muted: #A89888;
+      --row-divider: #E8DDD0;
+      --shadow: rgba(212, 66, 57, 0.15);
+      --font-heading: 'Cormorant Infant', Georgia, serif;
+      --font-body: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      padding: 40px 20px;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .page-header .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .lang-btn {
+      padding: 8px 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border: 2px solid var(--row-divider);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .lang-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 20px;
+      border: 3px solid var(--primary);
+      box-shadow: -8px 4px 24px var(--shadow);
+    }
+
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 14px;
+      color: var(--primary);
+    }
+
+    .card p, .card li {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .card ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .card li {
+      margin-bottom: 6px;
+    }
+
+    .card strong {
+      color: var(--text);
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .back-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    [lang="en"] { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Політика приватності</h1>
+      <div class="subtitle">FoodLook — Калькулятор Калорій</div>
+    </div>
+
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('uk')">UA</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+
+
+    <div lang="uk">
+
+      <div class="card">
+        <h2>1. Загальні положення</h2>
+        <p>Ця Політика приватності описує, як FoodLook ("Додаток") збирає, використовує та захищає вашу особисту інформацію. Використовуючи Додаток, ви погоджуєтесь з умовами цієї Політики.</p>
+      </div>
+
+      <div class="card">
+        <h2>2. Які дані ми збираємо</h2>
+        <p>Додаток може зберігати наступні дані:</p>
+        <ul>
+          <li><strong>Профіль користувача:</strong> стать, дата народження, зріст, вага, рівень активності</li>
+          <li><strong>Дані щоденника:</strong> записи спожитої їжі (назва продукту, вага, час прийому)</li>
+          <li><strong>Налаштування:</strong> мова інтерфейсу, тема оформлення</li>
+          <li><strong>Обліковий запис:</strong> нікнейм та хеш пароля (для хмари)</li>
+        </ul>
+        <p>Додаток <strong>не збирає</strong> імена, електронну пошту, номери телефонів, геолокацію та файли-cookie.</p>
+      </div>
+
+      <div class="card">
+        <h2>3. Де зберігаються дані</h2>
+        <p><strong>Локально:</strong> усі дані зберігаються у вашому браузері (localStorage) та не передаються на наші сервери автоматично.</p>
+        <p><strong>Хмара (опціонально):</strong> якщо ви увімкнули синхронізацію, зашифровані дані зберігаються у Cloudflare D1 (SQLite). Пароль зберігається лише у вигляді хешу SHA-256. Дані шифруються алгоритмом AES-256-GCM на вашому пристрої перед відправкою — сервер не має доступу до розшифрованого вмісту.</p>
+      </div>
+
+      <div class="card">
+        <h2>4. Як ми використовуємо дані</h2>
+        <ul>
+          <li>Розрахунок калорійної норми та макронутрієнтів</li>
+          <li>Відображення статистики на дашборді</li>
+          <li>Збереження записів щоденника</li>
+          <li>Синхронізація між пристроями (за вашої згоди)</li>
+        </ul>
+        <p>Дані <strong>не передаються</strong> третім особам та не використовуються для реклами.</p>
+      </div>
+
+      <div class="card">
+        <h2>5. Видалення даних</h2>
+        <p>Ви можете видалити свої дані в будь-який момент:</p>
+        <ul>
+          <li><strong>Локальні дані:</strong> очистіть localStorage браузера або натисніть "Вийти" у налаштуваннях</li>
+          <li><strong>Хмарні дані:</strong> натисніть "Видалити акаунт" у налаштуваннях — усі дані будуть незворотньо видалені з D1</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>6. Захист даних</h2>
+        <ul>
+          <li>Шифрування AES-256-GCM (хмарні дані)</li>
+          <li>Хешування паролів SHA-256</li>
+          <li>Не використовуються Google Analytics, рекламні трекери чи файли-cookie</li>
+          <li>Немає зовнішніх API-викликів, окрім бази продуктів (Google Sheets, публічний доступ)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>7. Контакти</h2>
+        <p>Якщо у вас є запитання щодо цієї Політики приватності, зверніться до нас:</p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/nitanaredleaf" style="color:var(--primary);">github.com/nitanaredleaf</a></p>
+      </div>
+
+    </div>
+
+
+    <div lang="en">
+
+      <div class="card">
+        <h2>1. General</h2>
+        <p>This Privacy Policy describes how FoodLook ("the App") collects, uses, and protects your personal information. By using the App, you agree to the terms of this Policy.</p>
+      </div>
+
+      <div class="card">
+        <h2>2. Data We Collect</h2>
+        <p>The App may store the following data:</p>
+        <ul>
+          <li><strong>User profile:</strong> gender, date of birth, height, weight, activity level</li>
+          <li><strong>Diary entries:</strong> food intake records (product name, weight, meal time)</li>
+          <li><strong>Settings:</strong> interface language, theme</li>
+          <li><strong>Account:</strong> nickname and password hash (for cloud sync)</li>
+        </ul>
+        <p>The App <strong>does not collect</strong> real names, emails, phone numbers, geolocation, or cookies.</p>
+      </div>
+
+      <div class="card">
+        <h2>3. Where Data Is Stored</h2>
+        <p><strong>Locally:</strong> all data is stored in your browser (localStorage) and is not automatically sent to any server.</p>
+        <p><strong>Cloud (optional):</strong> if you enable sync, encrypted data is stored in Cloudflare D1 (SQLite). Your password is stored only as a SHA-256 hash. Data is encrypted with AES-256-GCM on your device before transmission — the server has no access to decrypted content.</p>
+      </div>
+
+      <div class="card">
+        <h2>4. How We Use Data</h2>
+        <ul>
+          <li>Calculating daily calorie and macronutrient targets</li>
+          <li>Displaying dashboard statistics</li>
+          <li>Saving diary entries</li>
+          <li>Cross-device sync (only with your consent)</li>
+        </ul>
+        <p>Data is <strong>never shared</strong> with third parties and is not used for advertising.</p>
+      </div>
+
+      <div class="card">
+        <h2>5. Data Deletion</h2>
+        <p>You can delete your data at any time:</p>
+        <ul>
+          <li><strong>Local data:</strong> clear your browser's localStorage or tap "Logout" in Settings</li>
+          <li><strong>Cloud data:</strong> tap "Delete Account" in Settings — all data will be permanently removed from D1</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>6. Data Protection</h2>
+        <ul>
+          <li>AES-256-GCM encryption (cloud data)</li>
+          <li>SHA-256 password hashing</li>
+          <li>No Google Analytics, ad trackers, or cookies</li>
+          <li>No external API calls except the public food database (Google Sheets)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>7. Contact</h2>
+        <p>If you have questions about this Privacy Policy, reach out to us:</p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/nitanaredleaf" style="color:var(--primary);">github.com/nitanaredleaf</a></p>
+      </div>
+
+    </div>
+
+    <div class="back-link">
+      <a href="index.html">← Назад до FoodLook</a>
+    </div>
+
+  </div>
+
+  <script>
+    function setLang(lang) {
+      document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('.lang-btn[onclick*="' + lang + '"]').classList.add('active');
+      document.querySelectorAll('[lang]').forEach(function(el) {
+        if (el.tagName === 'HTML') return;
+        el.style.display = (el.getAttribute('lang') === lang) ? 'block' : 'none';
+      });
+    }
+    setLang('uk');
+  </script>
+</body>
+</html>
