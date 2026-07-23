@@ -1,8 +1,8 @@
 // ========== CONFIG ==========
-var FOOD_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=0&single=true&output=tsv';
-var DISH_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQp-Ak-Q3KuiANDXbA0QsC_AVdIdmidoorrQEzOUBORjDJvVfWSn1pB2qhCKNYjPeA8yTFpiHY6hGa-/pub?gid=303617623&single=true&output=tsv';
-var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwvQV7U8dBareulZcDAQNkysAxhK4z8cmnWpF3WZvFxuPv5VcNh7X172FjrMlejx6FH5Q/exec';
 var CLOUD_URL = 'https://calories-calc.nitanaredleaf.workers.dev';
+var FOOD_TSV = CLOUD_URL + '/data?type=food';
+var DISH_TSV = CLOUD_URL + '/data?type=dishes';
+var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwvQV7U8dBareulZcDAQNkysAxhK4z8cmnWpF3WZvFxuPv5VcNh7X172FjrMlejx6FH5Q/exec';
 
 // ========== CRYPTO ==========
 async function deriveKey(password, salt) {
