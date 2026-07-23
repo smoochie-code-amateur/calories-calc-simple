@@ -538,16 +538,17 @@
   <div id="tabProfile" style="display:none;">
     <div id="createPassScreen" class="card coral" style="display:none;">
       <div class="section-label"><span class="icon">🔐</span> Створення профілю</div>
+      <label>Нікнейм</label>
+      <input type="text" id="createNick" placeholder="Ваш нік" autocomplete="off">
       <label>Придумайте пароль</label>
       <input type="password" id="createPass" placeholder="Пароль">
       <label>Повторіть пароль</label>
       <input type="password" id="createPassConfirm" placeholder="Повторіть пароль">
       <button class="btn-primary" onclick="handleCreatePass()">🔐 Створити профіль</button>
       <p style="font-size:13px;color:#A08B74;margin-top:14px;line-height:1.7;">
-        ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері.
+        ⚠️ Дані зберігаються <strong>локально</strong> у вашому браузері та синхронізуються у хмару.
         Пароль не зберігається — він використовується для шифрування.
         Якщо забудете пароль, дані буде неможливо відновити.
-        <br><br>📌 Регулярно створюйте бекап через <strong>Експорт даних</strong>.
       </p>
       <button class="btn-outline" onclick="showImport()" style="font-size:13px;">📂 Відновити з бекапу</button>
       <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
@@ -555,11 +556,13 @@
 
     <div id="loginScreen" class="card coral" style="display:none;">
       <div class="section-label"><span class="icon">🔐</span> Вхід в профіль</div>
+      <label>Нікнейм</label>
+      <input type="text" id="loginNick" placeholder="Ваш нік" autocomplete="off">
       <label>Ваш пароль</label>
       <input type="password" id="loginPass" placeholder="Пароль">
       <button class="btn-primary" onclick="handleLogin()">🚀 Увійти</button>
       <p style="font-size:13px;color:#A08B74;margin-top:12px;">
-        ⚠️ Дані зберігаються локально. Забули пароль? Натисніть "Очистити".
+        ⚠️ Дані синхронізуються між пристроями. Забули пароль? Натисніть "Очистити".
       </p>
       <button class="btn-outline" onclick="clearAllData()" style="font-size:13px;color:#E06050;">🧹 Очистити всі дані</button>
     </div>
@@ -672,26 +675,10 @@
       <div id="cloudStatus" style="text-align:center;padding:12px 0;font-size:14px;color:#A08B74;">
         ○ Офлайн
       </div>
-
-      <div id="cloudLoginSection">
-        <label>Нік</label>
-        <input type="text" id="cloudNick" placeholder="Ваш нікнейм" autocomplete="off">
-        <label>Пароль</label>
-        <input type="password" id="cloudPass" placeholder="Пароль">
-        <div style="display:flex;gap:10px;">
-          <button class="btn-primary" onclick="cloudLogin()" style="flex:1;">Увійти</button>
-          <button class="btn-green" onclick="cloudRegister()" style="flex:1;">Зареєструватись</button>
-        </div>
-      </div>
-
-      <div id="cloudLogoutSection" style="display:none;">
-        <p style="font-size:13px;color:#A08B74;margin-bottom:12px;">
-          ✅ Залогінено як <strong id="cloudNickDisplay"></strong>
-        </p>
+      <div id="cloudActions" style="display:none;">
         <button class="btn-outline" onclick="syncToCloud()" style="font-size:13px;">🔄 Синхронізувати зараз</button>
         <button class="btn-outline" onclick="cloudLogout()" style="font-size:13px;color:#E06050;">🚪 Вийти з хмари</button>
       </div>
-
       <p style="font-size:12px;color:#BBA98E;margin-top:14px;line-height:1.6;">
         ☁️ Дані шифруються вашим паролем на пристрої.
         Сервер зберігає лише зашифровані блоби — ваш пароль ніколи не покидає браузер.
@@ -718,34 +705,21 @@ function isCloudLoggedIn() { return !!_cloudNick; }
 
 function updateCloudUI() {
   var statusEl = document.getElementById('cloudStatus');
-  var loginSection = document.getElementById('cloudLoginSection');
-  var logoutSection = document.getElementById('cloudLogoutSection');
-  var nickDisplay = document.getElementById('cloudNickDisplay');
+  var actionsEl = document.getElementById('cloudActions');
 
   if (isCloudLoggedIn()) {
-    statusEl.innerHTML = '● Синхронізовано';
+    statusEl.innerHTML = '● Синхронізовано як <strong>' + esc(_cloudNick) + '</strong>';
     statusEl.style.color = '#2D7D5F';
-    loginSection.style.display = 'none';
-    logoutSection.style.display = 'block';
-    nickDisplay.textContent = _cloudNick;
-    document.getElementById('cloudNick').value = '';
-    document.getElementById('cloudPass').value = '';
+    actionsEl.style.display = 'block';
   } else {
     statusEl.innerHTML = '○ Офлайн';
     statusEl.style.color = '#A08B74';
-    loginSection.style.display = 'block';
-    logoutSection.style.display = 'none';
+    actionsEl.style.display = 'none';
   }
 }
 
-async function cloudRegister() {
-  var nick = document.getElementById('cloudNick').value.trim();
-  var pass = document.getElementById('cloudPass').value;
-  if (!nick) { showToast('❌ Введіть нік'); return; }
-  if (!pass || pass.length < 4) { showToast('❌ Пароль ≥ 4 символів'); return; }
-  if (!_key) { showToast('❌ Спочатку створіть профіль'); return; }
-
-  var salt = fromB64(localStorage.getItem('foodlook_salt'));
+async function cloudRegister(nick, pass) {
+  if (!_key) return;
   var profileEnc = await encrypt(_profile, _key);
   var diaryEnc = await encrypt(_diary, _key);
 
@@ -756,21 +730,19 @@ async function cloudRegister() {
       body: JSON.stringify({ nick: nick, password: pass, salt: localStorage.getItem('foodlook_salt'), profile_enc: profileEnc, diary_enc: diaryEnc }),
     });
     var data = await res.json();
-    if (data.error) { showToast('❌ ' + data.error); return; }
+    if (data.error) { showToast('☁️ ' + data.error); return false; }
     _cloudNick = nick;
     localStorage.setItem('foodlook_cloud_nick', nick);
-    showToast('✅ Зареєстровано та синхронізовано');
-    updateCloudUI();
+    var passHash = await sha256str(pass);
+    localStorage.setItem('foodlook_cloud_hash', passHash);
+    return true;
   } catch (e) {
-    showToast('❌ Помилка з\'єднання');
+    showToast('☁️ Помилка реєстрації в хмарі');
+    return false;
   }
 }
 
-async function cloudLogin() {
-  var nick = document.getElementById('cloudNick').value.trim();
-  var pass = document.getElementById('cloudPass').value;
-  if (!nick || !pass) { showToast('❌ Заповніть всі поля'); return; }
-
+async function cloudLoginFetch(nick, pass) {
   try {
     var res = await fetch(CLOUD_URL + '/login', {
       method: 'POST',
@@ -778,34 +750,10 @@ async function cloudLogin() {
       body: JSON.stringify({ nick: nick, password: pass }),
     });
     var data = await res.json();
-    if (data.error) { showToast('❌ ' + data.error); return; }
-
-    // Restore salt and decrypt
-    localStorage.setItem('foodlook_salt', data.salt);
-    var salt = fromB64(data.salt);
-    _key = await deriveKey(pass, salt);
-
-    try {
-      _profile = data.profile_enc ? await decrypt(data.profile_enc, _key) : { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
-      _diary = data.diary_enc ? await decrypt(data.diary_enc, _key) : {};
-    } catch (e) {
-      showToast('❌ Невірний пароль');
-      _key = null;
-      return;
-    }
-
-    await saveLocal();
-    _cloudNick = nick;
-    localStorage.setItem('foodlook_cloud_nick', nick);
-    // Store password hash for auto-sync (not the password itself)
-    var passHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass)))).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-    localStorage.setItem('foodlook_cloud_hash', passHash);
-    showToast('✅ Ввійшли та синхронізовано');
-    updateCloudUI();
-    renderProfile();
-    loadTodayDiary();
+    if (data.error) return null;
+    return data;
   } catch (e) {
-    showToast('❌ Помилка з\'єднання');
+    return null;
   }
 }
 
@@ -847,12 +795,6 @@ function syncDebounced() {
   _syncTimeout = setTimeout(syncToCloud, 2000);
 }
 
-function updateCloudStatus() {
-  if (!isCloudLoggedIn()) return;
-  var statusEl = document.getElementById('cloudStatus');
-  if (statusEl) statusEl.innerHTML = '● Синхронізовано';
-}
-
 async function syncFromCloud() {
   if (!isCloudLoggedIn() || !_key) return;
   var passHash = localStorage.getItem('foodlook_cloud_hash');
@@ -863,16 +805,23 @@ async function syncFromCloud() {
     var data = await res.json();
     if (data.error) return;
 
-    // Decrypt cloud data
     var cloudProfile = data.profile_enc ? await decrypt(data.profile_enc, _key) : null;
     var cloudDiary = data.diary_enc ? await decrypt(data.diary_enc, _key) : null;
 
-    // Cloud data overwrites local only if it's meaningful
     if (cloudProfile && cloudProfile.name) _profile = cloudProfile;
     if (cloudDiary && Object.keys(cloudDiary).length > 0) _diary = cloudDiary;
 
     await saveLocal();
     var statusEl = document.getElementById('cloudStatus');
+    if (statusEl) statusEl.innerHTML = '● Синхронізовано ' + new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {}
+}
+
+async function sha256str(str) {
+  var data = new TextEncoder().encode(str);
+  var hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
     if (statusEl) statusEl.innerHTML = '● Синхронізовано ' + new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
   } catch (e) {
     // Silent fail on auto-sync
@@ -957,23 +906,56 @@ async function saveLocal() {
 }
 
 async function handleLogin() {
+  var nick = document.getElementById('loginNick').value.trim();
   var pass = document.getElementById('loginPass').value;
+  if (!nick) { showToast('❌ Введіть нік'); return; }
   if (!pass) { showToast('❌ Введи пароль'); return; }
-  var ok = await login(pass);
-  if (ok) {
-    showToast('✅ Увійшов');
+
+  // Try to login to cloud first
+  var cloudData = await cloudLoginFetch(nick, pass);
+  if (cloudData) {
+    // Cloud login successful - restore salt and decrypt
+    localStorage.setItem('foodlook_salt', cloudData.salt);
+    var salt = fromB64(cloudData.salt);
+    _key = await deriveKey(pass, salt);
+    try {
+      _profile = cloudData.profile_enc ? await decrypt(cloudData.profile_enc, _key) : { name: '', age: 0, gender: 'male', weight: 0, height: 0, kcalNorm: 0, deficit: 0, photo: '', photoUrl: '' };
+      _diary = cloudData.diary_enc ? await decrypt(cloudData.diary_enc, _key) : {};
+    } catch (e) {
+      showToast('❌ Невірний пароль');
+      _key = null;
+      return;
+    }
+    await saveLocal();
+    _cloudNick = nick;
+    localStorage.setItem('foodlook_cloud_nick', nick);
+    var passHash = await sha256str(pass);
+    localStorage.setItem('foodlook_cloud_hash', passHash);
+    showToast('✅ Ввійшли та синхронізовано');
     showProfileScreen();
     loadTodayDiary();
     document.getElementById('loginPass').value = '';
-    syncFromCloud();
+    document.getElementById('loginNick').value = '';
   } else {
-    showToast('❌ Невірний пароль');
+    // Try local login
+    var ok = await login(pass);
+    if (ok) {
+      showToast('✅ Увійшов (офлайн)');
+      showProfileScreen();
+      loadTodayDiary();
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginNick').value = '';
+    } else {
+      showToast('❌ Невірний пароль');
+    }
   }
 }
 
 document.getElementById('loginPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+document.getElementById('loginNick').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
 document.getElementById('createPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
 document.getElementById('createPassConfirm').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
+document.getElementById('createNick').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleCreatePass(); });
 document.getElementById('photoFileInput').addEventListener('change', handlePhotoFile);
 document.getElementById('diaryWeight').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !document.getElementById('addDiaryBtn').disabled) addDiaryEntry(); });
 
@@ -992,13 +974,15 @@ function showPasswordScreen() {
     document.getElementById('createPassScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'block';
     document.getElementById('loginPass').value = '';
-    document.getElementById('loginPass').focus();
+    document.getElementById('loginNick').value = _cloudNick || '';
+    document.getElementById('loginNick').focus();
   } else {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('createPassScreen').style.display = 'block';
     document.getElementById('createPass').value = '';
     document.getElementById('createPassConfirm').value = '';
-    document.getElementById('createPass').focus();
+    document.getElementById('createNick').value = '';
+    document.getElementById('createNick').focus();
   }
 }
 
@@ -1016,18 +1000,27 @@ function clearAllData() {
 }
 
 async function handleCreatePass() {
+  var nick = document.getElementById('createNick').value.trim();
   var pass = document.getElementById('createPass').value;
   var confirm = document.getElementById('createPassConfirm').value;
+  if (!nick) { showToast('❌ Введіть нік'); return; }
   if (!pass) { showToast('❌ Придумайте пароль'); return; }
   if (pass.length < 4) { showToast('❌ Пароль має бути хоча б 4 символи'); return; }
   if (pass !== confirm) { showToast('❌ Паролі не співпадають'); return; }
   var ok = await login(pass);
   if (ok) {
-    showToast('✅ Профіль створено! Дані зберігаються локально.');
+    // Register to cloud
+    var cloudOk = await cloudRegister(nick, pass);
+    if (cloudOk) {
+      showToast('✅ Профіль створено та синхронізовано!');
+    } else {
+      showToast('✅ Профіль створено (офлайн)');
+    }
     showProfileScreen();
     loadTodayDiary();
     document.getElementById('createPass').value = '';
     document.getElementById('createPassConfirm').value = '';
+    document.getElementById('createNick').value = '';
   } else {
     showToast('❌ Помилка створення профілю');
   }
